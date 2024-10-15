@@ -1,5 +1,38 @@
 {
 	"SchemaVersion": 1,
 	"Optional": true,
-	"Tabs": []
+	"Tabs": [
+		{
+			"TabName": "Rules",
+			"TabId": "rules",
+			"Handles": {
+				"NameHandle": "h5da6af2254f94a45ac836d6905f1c8d19c98",
+				"DescriptionHandle": "h353a00fdee594cae942e2bb1a1fa4cceff05"
+			},
+			"Sections": [
+				{
+					"SectionId": "sneaking",
+					"SectionName": "Sneaking",
+					"SectionDescription": "Controls configurations around Stealth",
+					"Handles": {
+						"NameHandle": "hb1bb88369ae94b318fec0c68d9e079f3dge7",
+						"DescriptionHandle": "h9a13c55410c0458aa57d56e85163dceadbc7"
+					},
+					"Settings": [
+						{
+							"Id": "sneaking_chars_are_eligible",
+							"Name": "Sneaking Characters Can Join ambush",
+							"Description": "BG3 prevents characters that are sneaking from entering combat - as a workaround, we bring eligible characters out of sneaking, have them enter combat, then have them hide again. Disable this if you don't want sneaking characters to be eligible",
+							"Handles": {
+								"NameHandle": "h06c3c574e4904a82a9945e1c73af93ee7d4e",
+								"DescriptionHandle": "h3cf3d320177447e79d68a6c8ac8f819e0f92"
+							},
+							"Type": "checkbox",
+							"Default": true
+						}
+					]
+				}
+			]
+		}
+	]
 }

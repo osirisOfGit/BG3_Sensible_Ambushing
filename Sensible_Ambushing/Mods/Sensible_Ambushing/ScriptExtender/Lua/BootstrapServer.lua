@@ -14,23 +14,20 @@ Ext.Osiris.RegisterListener("CombatStarted", 1, "before", function(combatGuid)
             if Osi.CanJoinCombat(character) ~= 1 then
                 Logger:BasicWarning("Player %s can't join combat?", character)
             else
-                for _, combatRow in pairs(Osi.DB_Is_InCombat:Get(nil, nil)) do
-                    if combatRow[2] == combatGuid then
-                        local combatChar = combatRow[1]
-                        if Osi.IsPlayer(combatChar) ~= 1 then
-                            local restoreSneaking = false
-                            if Osi.HasActiveStatus(character, "SNEAKING") == 1 then
-                                Logger:BasicDebug("Party member %s is currently sneaking - temporarily removing so they can join combat", character)
-                                Osi.RemoveStatus(character, "SNEAKING")
-                                restoreSneaking = true
-                            end
+                local restoreSneaking = false
+                if Osi.HasActiveStatus(character, "SNEAKING") == 1 and MCM.Get("sneaking_chars_are_eligible") then
+                    Logger:BasicDebug("Party member %s is currently sneaking - temporarily removing so they can join combat", character)
+                    Osi.RemoveStatus(character, "SNEAKING")
+                    restoreSneaking = true
+                end
+                for _, combatRow in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+                    local combatChar = combatRow[1]
+                    if Osi.IsPlayer(combatChar) ~= 1 then
+                        Osi.EnterCombat(character, combatChar)
 
-                            Osi.EnterCombat(character, combatChar)
-
-                            if restoreSneaking then
-                                Logger:BasicDebug("Restoring sneaking to %s", character)
-                                Osi.ApplyStatus(character, "SNEAKING", -1)
-                            end
+                        if restoreSneaking then
+                            Logger:BasicDebug("Restoring sneaking to %s", character)
+                            Osi.ApplyStatus(character, "SNEAKING", -1)
                         end
                     end
                 end
