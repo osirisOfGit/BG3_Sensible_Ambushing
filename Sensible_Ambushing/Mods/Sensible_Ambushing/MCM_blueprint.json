@@ -11,6 +11,28 @@
 			},
 			"Sections": [
 				{
+					"SectionId": "summons",
+					"SectionName": "Summons",
+					"SectionDescription": "Rules regarding Player Summons",
+					"Handles": {
+						"NameHandle": "h89d8763349d945bcb7887ea71c0efaa5ef2b",
+						"DescriptionHandle": "h7c3f599fa03a4e04afde6b8234149b35470c"
+					},
+					"Settings": [
+						{
+							"Id": "SA_summons_copy_summoner",
+							"Name": "Summons Copy Their Summoner",
+							"Description": "If enabled, Summons will automatically be considered eligible to join the ambush if their summoner is, and have the same effects applied (e.g. if the summoner's sneak is restored when entering combat, the summon will also be sneaking, even if they weren't before combat) - if disabled, they will be independently evaluated and processed using the same rules and behavior",
+							"Handles": {
+								"NameHandle": "h412fa11bfd57438c86747596d17c3a9702b6",
+								"DescriptionHandle": "hcb7d588012cd407e8c30cc2fd7a5dd9b8073"
+							},
+							"Type": "checkbox",
+							"Default": true
+						}
+					]
+				},
+				{
 					"SectionId": "sneaking",
 					"SectionName": "Sneaking",
 					"SectionDescription": "Controls configurations around Stealth",
@@ -20,7 +42,7 @@
 					},
 					"Settings": [
 						{
-							"Id": "sneaking_chars_are_eligible",
+							"Id": "SA_sneaking_chars_are_eligible",
 							"Name": "Sneaking Characters Can Join ambush",
 							"Description": "BG3 prevents characters that are sneaking from entering combat - as a workaround, we bring eligible characters out of sneaking, have them enter combat, then have them hide again. Disable this if you don't want sneaking characters to be eligible",
 							"Handles": {
@@ -29,6 +51,26 @@
 							},
 							"Type": "checkbox",
 							"Default": true
+						},
+						{
+							"Id": "SA_sneaking_chars_get_stealth_back",
+							"Name": "Sneaking Characters Retain Stealth During Ambush",
+							"Description": "Gives characters that were sneaking before combat started get their stealth back when entering the ambush",
+							"Handles": {
+								"NameHandle": "h1f5c4ef82f62479b9a1420dfbc14f24egf44",
+								"DescriptionHandle": "h36b2821b51b64b10b4dfab50f8a57d1353f6"
+							},
+							"Type": "checkbox",
+							"Default": true,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_sneaking_chars_are_eligible",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
 						}
 					]
 				}
