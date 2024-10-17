@@ -170,4 +170,33 @@ local function OnCombatStarted(combatGUID)
     end
 end
 
+
+-- https://discord.com/channels/98922182746329088/771869529528991744/1269036327165231134
+Ext.RegisterConsoleCommand("ROL", function(_, osiFunction)
+    if Osi[osiFunction] then
+        Ext.Osiris.RegisterListener(osiFunction, Osi[osiFunction].Arities[1], "before", function(...)
+            FCDebug(osiFunction..": %s", Ext.DumpExport({...}))
+        end)
+    end
+end)
+
+Ext.RegisterConsoleCommand("REL", function(_, extenderEvent)
+    Ext.Events[extenderEvent]:Subscribe(function(e)
+        FCDump({extenderEvent, {e}})
+    end)
+end)
+
+
+-- https://discord.com/channels/98922182746329088/771869529528991744/1260072668070412430
+local function OnLevelGameplayStarted(levelName, isEditorMode)
+    _P('Level gameplay started')
+
+    local hostEntity = Ext.Entity.Get(Osi.GetHostCharacter())
+    Ext.Entity.Subscribe("Health", function(c)
+        _P("HP changed!")
+        _D(c.Health)
+    end, hostEntity)
+end
+Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", OnLevelGameplayStarted)
+
 ]]
