@@ -31,6 +31,8 @@ local function IsCharacterEligibleToJoinAmbush(character)
             table.insert(post_ambush_functions, function(character_to_apply)
                 Logger:BasicDebug("Having %s sneak per da rules", character_to_apply)
                 Osi.ApplyStatus(character_to_apply, "SNEAKING", -1)
+
+
             end)
         end
     end
