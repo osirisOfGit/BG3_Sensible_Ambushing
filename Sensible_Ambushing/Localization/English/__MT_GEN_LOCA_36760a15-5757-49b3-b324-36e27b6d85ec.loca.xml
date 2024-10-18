@@ -88,4 +88,6 @@
     </content>
     <!-- END SNEAKING MCM -->
 
+    <content contentuid="h50a2f3e1579f4e9d8bf794d7f797c3e2gfd2" version="1">Ambushing Characters Can Trip</content>
+    <content contentuid="h46c8d4304532492eb51cdf5268bda1ce3fd0" version="1">If a sneaking character critically fails during their initial Stealth check, they will be knocked prone and lose their sneak status</content>
 </contentList>

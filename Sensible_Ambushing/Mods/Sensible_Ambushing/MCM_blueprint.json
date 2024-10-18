@@ -181,11 +181,46 @@
 						},
 						{
 							"Id": "SA_sneaking_char_roll_stealth_with_advantage",
-							"Name": "Ambushing Chars Roll Their Initial Passive Stealth Check With Advantage",
+							"Name": "Ambushing Characters Roll Their Initial Passive Stealth Check With Advantage",
 							"Description": "Only applies to the skill check initiated by this mod - if the character already has disadvantage (e.g. wearing heavy armor), they will roll without dis/advantage",
 							"Handles": {
 								"NameHandle": "h2070676865bd4f51a578de226461723261a8",
 								"DescriptionHandle": "hb4b4e0883aa042559c3a02b5fa9ad43850c1"
+							},
+							"Type": "checkbox",
+							"Default": true,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_sneaking_chars_are_eligible",
+										"ExpectedValue": true,
+										"Operator": "=="
+									},
+									{
+										"SettingId": "SA_sneaking_chars_get_stealth_back",
+										"ExpectedValue": true,
+										"Operator": "=="										
+									},
+									{
+										"SettingId": "SA_hide_sneaking_char_ghost",
+										"ExpectedValue": true,
+										"Operator": "=="
+									},
+									{
+										"SettingId": "SA_sneaking_char_roll_stealth",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_sneaking_chars_can_trip",
+							"Name": "Ambushing Characters Can Trip",
+							"Description": "If a sneaking character critically fails during their initial Stealth check, they will be knocked prone and lose their sneak status",
+							"Handles": {
+								"NameHandle": "h50a2f3e1579f4e9d8bf794d7f797c3e2gfd2",
+								"DescriptionHandle": "h46c8d4304532492eb51cdf5268bda1ce3fd0"
 							},
 							"Type": "checkbox",
 							"Default": true,
