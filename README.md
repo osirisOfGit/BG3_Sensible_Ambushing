@@ -1,6 +1,10 @@
 # TODO
 
-- [ ] Find a way to prevent enemies knowing where stealthed characters were on ambush start
+- [x] Find a way to prevent enemies knowing where stealthed characters were on ambush start
+  - [ ] Add an 'Ambushing' status to clearly communicate the missing 'Ghost' isn't a visual glitch
+  - [ ] Add a status to indicate that a character is ambushing, but alerted the enemy due to failed check, for flavour
+  - [ ] Add the ability to de-sneak a character if they critically fail their stealth check, triggering prone ('tripping' them)
+    - [ ] Add Thunderclap animation/sound/noise effect to characters that 'trip' while wearing Metal armor
 - [ ] Force surprise on enemies when attacking them
   - [ ] Before combat starts (exclusive MCM options):
     - [ ] When stealthed
