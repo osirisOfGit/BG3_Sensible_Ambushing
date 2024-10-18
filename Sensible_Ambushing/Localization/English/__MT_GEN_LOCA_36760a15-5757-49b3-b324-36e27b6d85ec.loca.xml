@@ -44,7 +44,7 @@
     <content contentuid="h1f5c4ef82f62479b9a1420dfbc14f24egf44" version="1">Sneaking Characters
         Retain Stealth During Ambush</content>
     <content contentuid="h36b2821b51b64b10b4dfab50f8a57d1353f6" version="1">Gives characters that
-        were sneaking before combat started get their stealth back when entering the ambush</content>
+        were sneaking before combat started their stealth back when entering the ambush</content>
 
     <content contentuid="h87a05633f1fd4977af72671725d932774242" version="1">Enemies don't know where
         to look for ambushing characters</content>
