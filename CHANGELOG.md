@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-- Prevent enemies from knowing where sneaking chars are during the ambush, unless they pass their perception check against the char's stealth 
+- Prevent enemies from knowing where sneaking chars are during the ambush, unless they pass their perception check against the char's stealth
 
 ## Changed
 
 - Internal refactor to support pre- and post- ambush functions for more flexibility later
+- Internal refactor to create Ambush "modules", introducing an API method to allow other mods to register their own
 
 <br/>
 
