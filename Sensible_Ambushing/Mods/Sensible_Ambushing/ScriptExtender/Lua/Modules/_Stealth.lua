@@ -19,34 +19,45 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 
 				Osi.ApplyStatus(character_to_apply, "SNEAKING", -1)
 
-				--[[
-                So, here's a fun thing - the Stealth component only gets created when a character sneaks/goes invis in a situation in which someone
-                will want to look for them, like during combat or while committing a crime that was seen. This creates the "Ghost", which represents
-                the position that character was at when they went stealth, which can't be removed since it's a component, but we can move that ghost
-                to well outside the sight range of the enemy, so they won't bother looking for it.
-                ]]
-				-- OnCreateDeferredOnce so we only execute this once, for this ambush, and only once the Stealth component is actually created
-				Ext.Entity.Get(character_to_apply):OnCreateDeferredOnce("Stealth", function(c)
-					stealth_tracker[character_to_apply] = c.Stealth.Position
+				if MCM.Get("SA_hide_sneaking_char_ghost") then
+					--[[
+						So, here's a fun thing - the Stealth component only gets created when a character sneaks/goes invis in a situation in which someone
+						will want to look for them, like during combat or while committing a crime that was seen. This creates the "Ghost", which represents
+						the position that character was at when they went stealth, which can't be removed since it's a component, but we can move that ghost
+						to well outside the sight range of the enemy, so they won't bother looking for it.
+					]]
+					-- OnCreateDeferredOnce so we only execute this once, for this ambush, and only once the Stealth component is actually created
+					Ext.Entity.Get(character_to_apply):OnCreateDeferredOnce("Stealth", function(c)
+						stealth_tracker[character_to_apply] = c.Stealth.Position
 
-					-- Need to replace the whole table, not just one index because... memory shenanigans
-					local pos = c.Stealth.Position
-					
-					-- y pos - Position has to be out of the sight cones of enemies, so placing it underground works without risking weird extreme math
-					pos[2] = pos[2] * -1
-					c.Stealth.Position = pos
+						-- Need to replace the whole table, not just one index because... memory shenanigans
+						local pos = c.Stealth.Position
 
-					-- Syncs the server changes to the clients
-					c:Replicate("Stealth")
+						-- y pos - Position has to be out of the sight cones of enemies, so placing it underground works without risking weird extreme math
+						pos[2] = pos[2] * -1
+						c.Stealth.Position = pos
 
-					Logger:BasicDebug("Hid %s's ghost from the enemy", character_to_apply)
-				end)
+						-- Syncs the server changes to the clients
+						c:Replicate("Stealth")
 
-				for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
-					combatParticipant = combatParticipant[1]
+						Logger:BasicDebug("Hid %s's ghost from the enemy", character_to_apply)
+					end)
 
-					if Osi.IsEnemy(character_to_apply, combatParticipant) == 1 then
-						Osi.RequestPassiveRollVersusSkill(character_to_apply, combatParticipant, "SkillCheckRoll", "Stealth", "Perception", 1, 0, "Sensible_Ambush_Stealth_Check")
+					if MCM.Get("SA_sneaking_char_roll_stealth") then
+						for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+							combatParticipant = combatParticipant[1]
+
+							if Osi.IsEnemy(character_to_apply, combatParticipant) == 1 then
+								Osi.RequestPassiveRollVersusSkill(character_to_apply,
+									combatParticipant,
+									"SkillCheckRoll",
+									"Stealth",
+									"Perception",
+									MCM.Get("SA_sneaking_char_roll_stealth_with_advantage") == true and 1 or 0,
+									0,
+									"Sensible_Ambush_Stealth_Check_" .. ModuleUUID)
+							end
+						end
 					end
 				end
 			end)
@@ -57,7 +68,7 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 end)
 
 Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, roller, rollSubject, resultType, isActiveRoll, criticality)
-	if eventName == "Sensible_Ambush_Stealth_Check" then
+	if eventName == "Sensible_Ambush_Stealth_Check_" .. ModuleUUID then
 		Logger:BasicTrace("Processing Ambush Stealth check for %s against %s with result %s",
 			roller,
 			rollSubject,
