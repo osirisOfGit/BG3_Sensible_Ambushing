@@ -3,6 +3,52 @@
 	"Optional": true,
 	"Tabs": [
 		{
+			"TabName": "General",
+			"TabDescription": "General settings",
+			"TabId": "general",
+			"Handles": {
+				"NameHandle": "hc18d4c4b444649f2a4599b69f0ad518a90g4",
+				"DescriptionHandle": "h0a2f540d60324c1ea424e17880655b1c7e19"
+			},
+			"Sections": [
+				{
+					"SectionName": "General Mod Behavior",
+					"SectionId": "general-mod-behavior",
+					"Handles": {
+						"NameHandle": "h2bad029164ee46eaa9409eb6dc927eb73de6"
+					},
+					"Settings": [
+						{
+							"Id": "SA_enabled",
+							"Name": "Enable Mod",
+							"Description": "Enables or disables the mod",
+							"Handles": {
+								"NameHandle": "h5c8cebd5dd4a4aaba84c500bc46c48fcf59a",
+								"DescriptionHandle": "h055b4e7efe9b414791aa90fc921eecd668e4"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_log_level",
+							"Name": "Log level",
+							"Description": "0 = Off, 1 = Error, 2 = Warn, 3 = Info, 4 = Debug, 5 = Trace",
+							"Handles": {
+								"NameHandle": "h7319446924bd42a783ed7d2a9a65f2c2fg63",
+								"DescriptionHandle": "h27b8458694fd4e2eb7aeb8ca7e6d21eb568d"
+							},
+							"Type": "slider_int",
+							"Default": 3,
+							"Options": {
+								"Min": 0,
+								"Max": 5
+							}
+						}
+					]
+				}
+			]
+		},
+		{
 			"TabName": "Rules",
 			"TabId": "rules",
 			"Handles": {

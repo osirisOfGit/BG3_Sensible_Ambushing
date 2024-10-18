@@ -38,13 +38,13 @@ local function IsCharacterEligibleToJoinAmbush(combatGuid, character)
 		local mod_pre, mod_post = moduleFunc(combatGuid, character)
 
 		if mod_pre then
-			pre_ambush_functions = table.move(mod_pre, 1, #mod_pre, #pre_ambush_functions, pre_ambush_functions)
+			table.move(mod_pre, 1, #mod_pre, #pre_ambush_functions + 1, pre_ambush_functions)
 
 			Logger:BasicTrace("New pre-ambush function count is %d", #pre_ambush_functions)
 		end
 
 		if mod_post then
-			post_ambush_functions =table.move(mod_post, 1, #mod_post, #post_ambush_functions, post_ambush_functions)
+			table.move(mod_post, 1, #mod_post, #post_ambush_functions + 1, post_ambush_functions)
 
 			Logger:BasicTrace("New post-ambush function count is %d", #post_ambush_functions)
 		end
@@ -126,36 +126,39 @@ local function executeCharacterAndSummonFuncs(player_char, char_funcs, summon_fu
 end
 
 Ext.Osiris.RegisterListener("CombatStarted", 1, "before", function(combatGuid)
-	local startTime = Ext.Utils.MonotonicTime()
-	local targetEnemy = nil
-	for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
-		player_char = player_char[1]
+	if MCM.Get("SA_enabled") then
+		local startTime = Ext.Utils.MonotonicTime()
+		local targetEnemy = nil
+		for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
+			player_char = player_char[1]
 
-		local char_pre_ambush_functions, char_post_ambush_functions = IsCharacterEligibleToJoinAmbush(combatGuid, player_char)
-		local summons_and_pre_ambush_functions, summons_and_post_ambush_functions = AreSummonsEligibleToJoinAmbush(combatGuid, player_char, char_pre_ambush_functions, char_post_ambush_functions)
+			local char_pre_ambush_functions, char_post_ambush_functions = IsCharacterEligibleToJoinAmbush(combatGuid, player_char)
+			local summons_and_pre_ambush_functions, summons_and_post_ambush_functions = AreSummonsEligibleToJoinAmbush(combatGuid, player_char, char_pre_ambush_functions,
+				char_post_ambush_functions)
 
-		if (char_pre_ambush_functions or char_post_ambush_functions) or (summons_and_pre_ambush_functions or summons_and_post_ambush_functions) then
-			-- Need to find an enemy character to use in Osi.EnterCombat
-			if not targetEnemy then
-				for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
-					combatParticipant = combatParticipant[1]
+			if (char_pre_ambush_functions or char_post_ambush_functions) or (summons_and_pre_ambush_functions or summons_and_post_ambush_functions) then
+				-- Need to find an enemy character to use in Osi.EnterCombat
+				if not targetEnemy then
+					for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+						combatParticipant = combatParticipant[1]
 
-					if Osi.IsEnemy(player_char, combatParticipant) == 1 then
-						targetEnemy = combatParticipant
-						break
+						if Osi.IsEnemy(player_char, combatParticipant) == 1 then
+							targetEnemy = combatParticipant
+							break
+						end
 					end
 				end
+
+				executeCharacterAndSummonFuncs(player_char, char_pre_ambush_functions, summons_and_pre_ambush_functions)
+
+				Osi.EnterCombat(player_char, targetEnemy)
+
+				executeCharacterAndSummonFuncs(player_char, char_post_ambush_functions, summons_and_post_ambush_functions)
 			end
-
-			executeCharacterAndSummonFuncs(player_char, char_pre_ambush_functions, summons_and_pre_ambush_functions)
-
-			Osi.EnterCombat(player_char, targetEnemy)
-
-			executeCharacterAndSummonFuncs(player_char, char_post_ambush_functions, summons_and_post_ambush_functions)
 		end
-	end
 
-	Logger:BasicTrace("Finished processing in %dms", Ext.Utils.MonotonicTime() - startTime)
+		Logger:BasicTrace("Finished processing in %dms", Ext.Utils.MonotonicTime() - startTime)
+	end
 end)
 
 

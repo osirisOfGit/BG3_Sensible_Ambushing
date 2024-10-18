@@ -3,6 +3,16 @@
     <content contentuid="h5da6af2254f94a45ac836d6905f1c8d19c98" version="1">Rules</content>
     <content contentuid="h353a00fdee594cae942e2bb1a1fa4cceff05" version="1">Tweak the rules</content>
 
+	<!-- START GENERAL MCM -->
+    <content contentuid="hc18d4c4b444649f2a4599b69f0ad518a90g4" version="1">General</content>
+    <content contentuid="h0a2f540d60324c1ea424e17880655b1c7e19" version="1">General settings</content>
+    <content contentuid="h2bad029164ee46eaa9409eb6dc927eb73de6" version="1">General Mod Behavior</content>
+    <content contentuid="h5c8cebd5dd4a4aaba84c500bc46c48fcf59a" version="1">Enable Mod</content>
+    <content contentuid="h055b4e7efe9b414791aa90fc921eecd668e4" version="1">Enables or disables the mod</content>
+    <content contentuid="h7319446924bd42a783ed7d2a9a65f2c2fg63" version="1">Log Level</content>
+    <content contentuid="h27b8458694fd4e2eb7aeb8ca7e6d21eb568d" version="1">0 = Off, 1 = Error, 2 = Warn, 3 = Info, 4 = Debug, 5 = Trace</content>
+	<!-- END GENERAL MCM -->
+
 	<!-- START SUMMON MCM -->
     <content contentuid="h89d8763349d945bcb7887ea71c0efaa5ef2b" version="1">Summons</content>
     <content contentuid="h7c3f599fa03a4e04afde6b8234149b35470c" version="1">Rules regarding Player Summons</content>
@@ -21,4 +31,5 @@
     <content contentuid="h1f5c4ef82f62479b9a1420dfbc14f24egf44" version="1">Sneaking Characters Retain Stealth During Ambush</content>
     <content contentuid="h36b2821b51b64b10b4dfab50f8a57d1353f6" version="1">Gives characters that were sneaking before combat started get their stealth back when entering the ambush</content>
 	<!-- END SNEAKING MCM -->
+
 </contentList>

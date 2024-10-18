@@ -65,10 +65,10 @@ end
 
 function Logger:IsLogLevelEnabled(logLevel)
     -- return Config.AIM and Config.AIM.LOG_LEVEL and tonumber(Config.AIM.LOG_LEVEL) >= logLevel
-    return true
+    return MCM.Get("SA_log_level") >= logLevel
 end
 
---- Function to print text with custom colors, message type, custom prefix, rainbowText ,and prefix length
+--- Function to print text with custom colors, message type, custom prefix, rainbowText, and prefix length
 function Logger:BasicPrint(content, messageType, textColor, customPrefix, rainbowText, prefixLength)
     -- if Config.AIM and Config.AIM.LOG_LEVEL and tonumber(Config.AIM.LOG_LEVEL) >= messageType then
         prefixLength = prefixLength or 15
