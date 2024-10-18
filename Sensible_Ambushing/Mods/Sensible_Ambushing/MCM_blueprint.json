@@ -3,6 +3,52 @@
 	"Optional": true,
 	"Tabs": [
 		{
+			"TabName": "General",
+			"TabDescription": "General settings",
+			"TabId": "general",
+			"Handles": {
+				"NameHandle": "hc18d4c4b444649f2a4599b69f0ad518a90g4",
+				"DescriptionHandle": "h0a2f540d60324c1ea424e17880655b1c7e19"
+			},
+			"Sections": [
+				{
+					"SectionName": "General Mod Behavior",
+					"SectionId": "general-mod-behavior",
+					"Handles": {
+						"NameHandle": "h2bad029164ee46eaa9409eb6dc927eb73de6"
+					},
+					"Settings": [
+						{
+							"Id": "SA_enabled",
+							"Name": "Enable Mod",
+							"Description": "Enables or disables the mod",
+							"Handles": {
+								"NameHandle": "h5c8cebd5dd4a4aaba84c500bc46c48fcf59a",
+								"DescriptionHandle": "h055b4e7efe9b414791aa90fc921eecd668e4"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_log_level",
+							"Name": "Log level",
+							"Description": "0 = Off, 1 = Error, 2 = Warn, 3 = Info, 4 = Debug, 5 = Trace",
+							"Handles": {
+								"NameHandle": "h7319446924bd42a783ed7d2a9a65f2c2fg63",
+								"DescriptionHandle": "h27b8458694fd4e2eb7aeb8ca7e6d21eb568d"
+							},
+							"Type": "slider_int",
+							"Default": 3,
+							"Options": {
+								"Min": 0,
+								"Max": 5
+							}
+						}
+					]
+				}
+			]
+		},
+		{
 			"TabName": "Rules",
 			"TabId": "rules",
 			"Handles": {
@@ -36,6 +82,9 @@
 					"SectionId": "sneaking",
 					"SectionName": "Sneaking",
 					"SectionDescription": "Controls configurations around Stealth",
+					"Options": {
+						"IsCollapsible": true
+					},
 					"Handles": {
 						"NameHandle": "hb1bb88369ae94b318fec0c68d9e079f3dge7",
 						"DescriptionHandle": "h9a13c55410c0458aa57d56e85163dceadbc7"
@@ -66,6 +115,96 @@
 								"Conditions": [
 									{
 										"SettingId": "SA_sneaking_chars_are_eligible",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_hide_sneaking_char_ghost",
+							"Name": "Enemies don't know where to look for ambushing characters",
+							"Description": "Since we add characters to combat _then_ sneak them, BG3 adds a 'ghost' that indicates where a character stealthed, so enemies can look for them there. Enabling this option 'hides' that ghost, effectively making it so enemies don't know they're being ambushed",
+							"Handles": {
+								"NameHandle": "h87a05633f1fd4977af72671725d932774242",
+								"DescriptionHandle": "h507d0ae7cfe543dbb7ebb4123cf4a84abgge"
+							},
+							"Type": "checkbox",
+							"Default": true,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_sneaking_chars_are_eligible",
+										"ExpectedValue": true,
+										"Operator": "=="
+									},
+									{
+										"SettingId": "SA_sneaking_chars_get_stealth_back",
+										"ExpectedValue": true,
+										"Operator": "=="										
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_sneaking_char_roll_stealth",
+							"Name": "Ambushing characters roll passive Stealth skill check against each enemies' Perception",
+							"Description": "Each character that is sneaking during the ambush will have to make this check to keep their 'ghost' hidden - if they fail, they remain stealthed, but the enemy knows to look at their location (whether or not they actually do is up to the AI)",
+							"Handles": {
+								"NameHandle": "ha1a64b7769144a01b30505996c655224baa9",
+								"DescriptionHandle": "heb8c356b0e0c49b9b7316f1ddc11d93fd8a5"
+							},
+							"Type": "checkbox",
+							"Default": true,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_sneaking_chars_are_eligible",
+										"ExpectedValue": true,
+										"Operator": "=="
+									},
+									{
+										"SettingId": "SA_sneaking_chars_get_stealth_back",
+										"ExpectedValue": true,
+										"Operator": "=="										
+									},
+									{
+										"SettingId": "SA_hide_sneaking_char_ghost",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_sneaking_char_roll_stealth_with_advantage",
+							"Name": "Ambushing chars roll their initial passive Stealth check with advantage",
+							"Description": "Only applies to the skill check initiated by this mod - if the character already has disadvantage (e.g. wearing heavy armor), they will roll without dis/advantage",
+							"Handles": {
+								"NameHandle": "h2070676865bd4f51a578de226461723261a8",
+								"DescriptionHandle": "hb4b4e0883aa042559c3a02b5fa9ad43850c1"
+							},
+							"Type": "checkbox",
+							"Default": true,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_sneaking_chars_are_eligible",
+										"ExpectedValue": true,
+										"Operator": "=="
+									},
+									{
+										"SettingId": "SA_sneaking_chars_get_stealth_back",
+										"ExpectedValue": true,
+										"Operator": "=="										
+									},
+									{
+										"SettingId": "SA_hide_sneaking_char_ghost",
+										"ExpectedValue": true,
+										"Operator": "=="
+									},
+									{
+										"SettingId": "SA_sneaking_char_roll_stealth",
 										"ExpectedValue": true,
 										"Operator": "=="
 									}

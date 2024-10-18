@@ -12,7 +12,6 @@ function ModUtils:GetModInfoFromUUID(modUUID)
 			modUUID)
 
 		Logger:BasicError(errorMessage)
-		error(errorMessage)
 	end
 	return Ext.Mod.GetMod(modUUID).Info
 end

@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [x.y.z] (Unreleased)
 
+## Added
+
+- Preventing enemies from knowing where sneaking chars are during the ambush, unless the char fails their passive Stealth check against the enemy's Perception
+- MCM options for enabling the mod and changing the log level
+
 ## Changed
 
 - Internal refactor to support pre- and post- ambush functions for more flexibility later
+- Internal refactor to create Ambush "modules", introducing an API method to allow other mods to register their own
 
 <br/>
 
