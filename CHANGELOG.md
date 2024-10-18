@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-- Prevent enemies from knowing where sneaking chars are during the ambush, unless they pass their perception check against the char's stealth
+- Preventing enemies from knowing where sneaking chars are during the ambush, unless the char fails their passive Stealth check against the enemy's Perception
+- MCM options for enabling the mod and changing the log level
 
 ## Changed
 
