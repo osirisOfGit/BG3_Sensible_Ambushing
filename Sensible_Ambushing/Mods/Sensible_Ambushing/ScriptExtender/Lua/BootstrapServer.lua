@@ -6,12 +6,15 @@ Ext.Require("Stuff/Utils/_Logger.lua")
 -- https://github.com/FallenStar08/BG3-DUMP/tree/main
 -- https://bg3.norbyte.dev/search?q=Surprised
 
+local stealth_tracker = {}
+
+
 local function IsCharacterEligibleToJoinAmbush(character)
     local pre_ambush_functions = {}
     local post_ambush_functions = {}
 
     if Osi.IsInCombat(character) == 1 then
-        Logger:BasicDebug("Character %s is already in combat", character)
+        Logger:BasicTrace("Character %s is already in combat", character)
         return
     elseif Osi.CanJoinCombat(character) ~= 1 then
         Logger:BasicWarning("Character %s can't join combat?", character)
@@ -36,17 +39,30 @@ local function IsCharacterEligibleToJoinAmbush(character)
                 --[[
                 So, here's a fun thing - the Stealth component only gets created when a character sneaks/goes invis in a situation in which someone
                 will want to look for them, like during combat or while committing a crime that was seen. This creates the "Ghost", which represents
-                the position that character was at when they went stealth, can't be removed as a component, but we can move that ghost to the other side of the 
-                map, well outside the sight range of the enemy, so they won't bother looking for it.
+                the position that character was at when they went stealth, which can't be removed since it's a component, but we can move that ghost
+                to well outside the sight range of the enemy, so they won't bother looking for it.
                 ]]
                 Ext.Entity.Get(character_to_apply):OnCreateDeferredOnce("Stealth", function(c)
+                    stealth_tracker[character_to_apply] = c.Stealth.Position
+
+                    -- Need to replace the whole table, not just one index because... memory shenanigans
                     local pos = c.Stealth.Position
-                    pos[1] = pos[1] + 1000
-                    Logger:BasicInfo("Changing %s Stealth to %s", c.Uuid.EntityUuid, Ext.Json.Stringify(pos))
+                    pos[2] = pos[2] * -10
                     c.Stealth.Position = pos
+
+                    -- Syncs the server changes to the clients
                     c:Replicate("Stealth")
-                    Logger:BasicInfo("Resulting %s Stealth is %s", c.Uuid.EntityUuid, Ext.Json.Stringify(c.Stealth.Position))
+
+                    Logger:BasicDebug("Hid %s's ghost from the enemy", character_to_apply)
                 end)
+
+                for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+                    combatParticipant = combatParticipant[1]
+
+                    if Osi.IsEnemy(character_to_apply, combatParticipant) == 1 then
+                        Osi.RequestPassiveRollVersusSkill(character_to_apply, combatParticipant, "SkillCheckRoll", "Stealth", "Perception", 1, 0, "Sensible_Ambush_Stealth_Check")
+                    end
+                end
             end)
         end
     end
@@ -54,6 +70,29 @@ local function IsCharacterEligibleToJoinAmbush(character)
     -- Returning nil if we're empty makes later checks simpler and more consistent, as long as we know about it, since we're returning nils above (don't do this if you're building an API)
     return #pre_ambush_functions > 0 and pre_ambush_functions or nil, #post_ambush_functions > 0 and post_ambush_functions or nil
 end
+
+Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, roller, rollSubject, resultType, isActiveRoll, criticality)
+    if eventName == "Sensible_Ambush_Stealth_Check" then
+        Logger:BasicDebug("Processing Ambush Stealth check for %s against %s with result %s",
+            roller,
+            rollSubject,
+            resultType)
+
+        for char, originalGhost in pairs(stealth_tracker) do
+            if char == roller then
+                if resultType == 0 then
+                    Logger:BasicDebug("%s failed their stealth check, so the enemy knows they're being ambushed", roller)
+                    local ent = Ext.Entity.Get(roller)
+                    ent.Stealth.Position = originalGhost
+                    ent:Replicate("Stealth")
+
+                    stealth_tracker[char] = nil
+                end
+                return
+            end
+        end
+    end
+end)
 
 local function AreSummonsEligibleToJoinAmbush(character, char_pre_ambush_funcs, char_post_ambush_funcs)
     local summon_pre_ambush_functions = {}
@@ -126,8 +165,8 @@ local function executeCharacterAndSummonFuncs(player_char, char_funcs, summon_fu
     end
 end
 
--- Osi.ApplyStatus("S_Player_ShadowHeart_3ed74f06-3c60-42dc-83f6-f034cb47c679", "SNEAKING", -1)
 Ext.Osiris.RegisterListener("CombatStarted", 1, "before", function(combatGuid)
+    local startTime = Ext.Utils.MonotonicTime()
     local targetEnemy = nil
     for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
         player_char = player_char[1]
@@ -155,6 +194,8 @@ Ext.Osiris.RegisterListener("CombatStarted", 1, "before", function(combatGuid)
             executeCharacterAndSummonFuncs(player_char, char_post_ambush_functions, summons_and_post_ambush_functions)
         end
     end
+
+    Logger:BasicTrace("Finished processing in %dms", Ext.Utils.MonotonicTime() - startTime)
 end)
 
 
