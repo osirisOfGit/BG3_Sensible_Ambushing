@@ -5,6 +5,7 @@
   - [ ] Add a status to indicate that a character is ambushing, but alerted the enemy due to failed check, for flavour
   - [ ] Add the ability to de-sneak a character if they critically fail their stealth check, triggering prone ('tripping' them)
     - [ ] Add Thunderclap animation/sound/noise effect to characters that 'trip' while wearing Metal armor
+- [ ]  Add a toggleble passive to exclude party members from ambushes
 - [ ] Force surprise on enemies when attacking them
   - [ ] Before combat starts (exclusive MCM options):
     - [ ] When stealthed
