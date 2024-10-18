@@ -19,3 +19,11 @@
 - [ ] I'm 100% sure there's gonna be multiplayer shenanigans i'll have to deal with
   - [ ] MCM notification allowing other players to opt in and have rules run?
 - [ ] Flavour notification? "AMBUSH SUCCESSFUL" or something?
+
+## Long-Term goals
+
+- I wanted to add a counter-insight check if the initial stealth check fails, which players would have to pass to know if the Enemy knows they're being ambushed,
+but it's not physically possible to hide the ghost just for the player - it needs to be inside the view-cone of the enemy, which means also being visible to the player.
+May not be possible unless i come up with a custom stealth system
+
+- 'Holding' actions, triggering like a reaction when the enemy is in range
