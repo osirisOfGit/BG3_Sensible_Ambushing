@@ -30,9 +30,23 @@ local function IsCharacterEligibleToJoinAmbush(character)
         if MCM.Get("SA_sneaking_chars_get_stealth_back") then
             table.insert(post_ambush_functions, function(character_to_apply)
                 Logger:BasicDebug("Having %s sneak per da rules", character_to_apply)
+
                 Osi.ApplyStatus(character_to_apply, "SNEAKING", -1)
 
-
+                --[[
+                So, here's a fun thing - the Stealth component only gets created when a character sneaks/goes invis in a situation in which someone
+                will want to look for them, like during combat or while committing a crime that was seen. This creates the "Ghost", which represents
+                the position that character was at when they went stealth, can't be removed as a component, but we can move that ghost to the other side of the 
+                map, well outside the sight range of the enemy, so they won't bother looking for it.
+                ]]
+                Ext.Entity.Get(character_to_apply):OnCreateDeferredOnce("Stealth", function(c)
+                    local pos = c.Stealth.Position
+                    pos[1] = pos[1] + 1000
+                    Logger:BasicInfo("Changing %s Stealth to %s", c.Uuid.EntityUuid, Ext.Json.Stringify(pos))
+                    c.Stealth.Position = pos
+                    c:Replicate("Stealth")
+                    Logger:BasicInfo("Resulting %s Stealth is %s", c.Uuid.EntityUuid, Ext.Json.Stringify(c.Stealth.Position))
+                end)
             end)
         end
     end
@@ -78,11 +92,13 @@ local function AreSummonsEligibleToJoinAmbush(character, char_pre_ambush_funcs, 
     end
 
     -- Returning nil if we're empty makes later checks simpler and more consistent, as long as we know about it (don't do this if you're building an API)
-    return #summon_pre_ambush_functions > 0 and summon_pre_ambush_functions or nil, #summon_post_ambush_functions > 0 and summon_post_ambush_functions or nil
+    -- Since we're using the summon as the index for the table, we can't check the size since lua just iterates the numeric index to get the count
+    return next(summon_pre_ambush_functions) and summon_pre_ambush_functions or nil, next(summon_post_ambush_functions) and summon_post_ambush_functions or nil
 end
 
 local function executeCharacterAndSummonFuncs(player_char, char_funcs, summon_funcs)
     if char_funcs then
+        Logger:BasicTrace("Executing functions for %s", player_char)
         for _, char_func in pairs(char_funcs) do
             local success, errorResponse = pcall(function()
                 char_func(player_char)
@@ -96,6 +112,7 @@ local function executeCharacterAndSummonFuncs(player_char, char_funcs, summon_fu
 
     if summon_funcs then
         for summon, funcs in pairs(summon_funcs) do
+            Logger:BasicTrace("Executing functions for %s", summon)
             for _, func in pairs(funcs) do
                 local success, errorResponse = pcall(function()
                     func(summon)
@@ -114,6 +131,7 @@ Ext.Osiris.RegisterListener("CombatStarted", 1, "before", function(combatGuid)
     local targetEnemy = nil
     for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
         player_char = player_char[1]
+
         local char_pre_ambush_functions, char_post_ambush_functions = IsCharacterEligibleToJoinAmbush(player_char)
         local summons_and_pre_ambush_functions, summons_and_post_ambush_functions = AreSummonsEligibleToJoinAmbush(player_char, char_pre_ambush_functions, char_post_ambush_functions)
 
@@ -122,6 +140,7 @@ Ext.Osiris.RegisterListener("CombatStarted", 1, "before", function(combatGuid)
             if not targetEnemy then
                 for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
                     combatParticipant = combatParticipant[1]
+
                     if Osi.IsEnemy(player_char, combatParticipant) == 1 then
                         targetEnemy = combatParticipant
                         break
