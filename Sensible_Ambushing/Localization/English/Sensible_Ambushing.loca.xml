@@ -25,7 +25,7 @@
     <content contentuid="h06c3c574e4904a82a9945e1c73af93ee7d4e" version="1">Sneaking Characters Can Join Ambush</content>
     <content contentuid="h3cf3d320177447e79d68a6c8ac8f819e0f92" version="1">BG3 prevents characters that are sneaking from entering combat - as a workaround, we bring eligible characters out of sneaking, have them enter combat, then have them hide again. Disable this if you don't want sneaking characters to be eligible</content>
     <content contentuid="h1f5c4ef82f62479b9a1420dfbc14f24egf44" version="1">Sneaking Characters Retain Stealth During Ambush</content>
-    <content contentuid="h36b2821b51b64b10b4dfab50f8a57d1353f6" version="1">Gives characters that were sneaking before combat started their stealth back when entering the ambush</content>
+    <content contentuid="h36b2821b51b64b10b4dfab50f8a57d1353f6" version="1">Gives characters that were sneaking before combat started their 'Sneak' back when entering the ambush</content>
     <content contentuid="h87a05633f1fd4977af72671725d932774242" version="1">Enemies Don't Know Where To Look For Ambushing Characters</content>
     <content contentuid="h507d0ae7cfe543dbb7ebb4123cf4a84abgge" version="1">Since we add characters to combat than sneak them, BG3 adds a 'ghost' that indicates where a character stealthed, so enemies can look for them there. Enabling this option 'hides' that ghost, effectively making it so enemies don't know they're being ambushed</content>
     <content contentuid="ha1a64b7769144a01b30505996c655224baa9" version="1">Ambushing Characters Roll Passive Stealth Skill Check Against Each Enemies Perception</content>
