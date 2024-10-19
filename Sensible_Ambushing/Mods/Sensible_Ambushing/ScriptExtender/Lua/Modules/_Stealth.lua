@@ -75,10 +75,50 @@ Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, rolle
 			resultType,
 			criticality)
 
-		if MCM.Get("SA_sneaking_chars_can_trip") and criticality == 2 then -- Critical Fail
+		--  and criticality == 2
+		if MCM.Get("SA_sneaking_chars_can_trip") then -- Critical Fail
 			Logger:BasicDebug("%s critically failed their stealth check!", roller)
 
 			Osi.ApplyStatus(roller, "PRONE", 1)
+
+			local metalEquipmentCount = 0
+			for _, itemSlot in ipairs(Ext.Enums.ItemSlot) do
+				itemSlot = tostring(itemSlot)
+				-- Getting this aligned with Osi.EQUIPMENTSLOTNAME, because, what the heck Larian (╯°□°）╯︵ ┻━┻
+				if itemSlot == Ext.Enums.StatsItemSlot[Ext.Enums.StatsItemSlot.MeleeMainHand] then
+					itemSlot = "Melee Main Weapon"
+				elseif itemSlot == Ext.Enums.StatsItemSlot[Ext.Enums.StatsItemSlot.MeleeOffHand] then
+					itemSlot = "Melee Offhand Weapon"
+				elseif itemSlot == Ext.Enums.StatsItemSlot[Ext.Enums.StatsItemSlot.RangedMainHand] then
+					itemSlot = "Ranged Main Weapon"
+				elseif itemSlot == Ext.Enums.StatsItemSlot[Ext.Enums.StatsItemSlot.RangedOffHand] then
+					itemSlot = "Ranged Offhand Weapon"
+				end
+
+				local equippedItem = Osi.GetEquippedItem(roller, itemSlot)
+				-- https://bg3.norbyte.dev/search?q=METAL#result-8fad86503dd1ed79f5256d4c28cdc47fac697540
+				if equippedItem and Osi.IsTagged(equippedItem, "abadcad5-9229-4999-8c7a-cd557ff2c95c") then
+					metalEquipmentCount = metalEquipmentCount + 1
+				end
+			end
+
+			Logger:BasicTrace("%s has %d metal items equipped", roller, metalEquipmentCount)
+			if metalEquipmentCount > 1 then
+				-- other candidates
+				-- Osi.PlayEffect("S_Player_Gale_ad9af97d-75da-406a-ae13-7071c563f604", "VFX_Spells_Cast_Damage_Thunder_TargetAoE_Impact_PostFX_Textkey_02_b52ab2d3-b887-459f-d375-6059b7fadbc0", "", 1)
+				-- Osi.PlayEffect("S_Player_Gale_ad9af97d-75da-406a-ae13-7071c563f604", "VFX_Spells_Cast_Damage_Thunder_TargetAoE_Impact_Textkey_02_8805c3ee-2b46-1450-d053-fb612089da7d", "", 15)
+				-- Osi.PlayEffect("S_Player_Gale_ad9af97d-75da-406a-ae13-7071c563f604", "VFX_Spells_Cast_Damage_Thunder_GlyphOfWarding_Detonation_Impact_01_1b766a1b-3fa3-7e19-8fbf-8f5d112f4df4", "", 1)
+				-- Osi.PlaySound("S_Player_Gale_ad9af97d-75da-406a-ae13-7071c563f604", "Spell_Cast_Damage_Thunder_ChromaticOrbThunder_L1to3")
+
+				-- https://bg3.norbyte.dev/search?q=VFX_Projectiles_SphereOfElementalBalance_Thunder_Impact_01#result-b5eb31dc214be0ee7b6c8f0d6612851bfafdf9b3
+				Osi.PlayEffect(roller, "VFX_Projectiles_SphereOfElementalBalance_Thunder_Impact_01_c95979c7-551d-231b-c196-ed9c16f3121f", "", 1 * metalEquipmentCount)
+				Osi.PlaySound(roller, "Items_Doors_Destroy_Metal_Big")
+			end
+
+			-- https://bg3.norbyte.dev/search?q=Surface#result-bbcd130617bfa4089f42431fb3373dca79334542
+			Osi.CreateSurface(roller, "SurfaceAsh", 2 * metalEquipmentCount, 1)
+
+			Osi.IterateCharactersAround(roller, 2 * metalEquipmentCount, "Sensible_Ambush_Fail_With_Metal_Armor_" .. roller, "Sensible_Ambush_Completed_Fail_With_Metal_Armor_" .. roller )
 
 			stealth_tracker[roller] = nil
 			return
@@ -97,6 +137,21 @@ Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, rolle
 				end
 				return
 			end
+		end
+	end
+end)
+
+Ext.Osiris.RegisterListener("EntityEvent", 2, "before", function(char_in_radius_of_tripped_char, event)
+	if string.find(event, "Sensible_Ambush_Fail_With_Metal_Armor_") then
+		local char_that_tripped = string.sub(event, string.len("Sensible_Ambush_Fail_With_Metal_Armor_"))
+
+		if Osi.IsInCombat(char_in_radius_of_tripped_char) == 0
+			and Osi.CanMove(char_in_radius_of_tripped_char) == 1
+			and Osi.IsMovementBlocked(char_in_radius_of_tripped_char) == 0
+			and Osi.CanFight(char_in_radius_of_tripped_char) == 1
+			and Osi.CanJoinCombat(char_in_radius_of_tripped_char) == 1
+		then
+			Osi.CharacterMoveTo(char_in_radius_of_tripped_char, char_that_tripped, "Sprint", "Sensible_Ambush")
 		end
 	end
 end)
