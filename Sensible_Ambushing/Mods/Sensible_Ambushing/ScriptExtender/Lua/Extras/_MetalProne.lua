@@ -86,15 +86,27 @@ Ext.Osiris.RegisterListener("EntityEvent", 2, "before", function(char_in_radius_
 				or (who_can_be_attracted == Ext.Loca.GetTranslatedString("hec43f582413d41388788d91c87f3aef57d1e") and Osi.IsEnemy(Osi.GetHostCharacter(), char_in_radius_of_tripped_char) == 1)
 				or (who_can_be_attracted == Ext.Loca.GetTranslatedString("h552a3874acdf4bdaa3f100134a032e996ea2") and Osi.IsAlly(Osi.GetHostCharacter(), char_in_radius_of_tripped_char) == 1)
 			then
-				Logger:BasicTrace("%s passed the MCM checks", char_in_radius_of_tripped_char)
+				local x, y, z = Osi.GetPosition(char_that_tripped)
 
-				Osi.CharacterMoveTo(char_in_radius_of_tripped_char, char_that_tripped, "Sprint", "Sensible_Ambush")
+				Logger:BasicTrace("%s passed the MCM checks and is going to sprint to %d/%d/%d", char_in_radius_of_tripped_char, x, y, z)
+				
+				Osi.CharacterMoveToPosition(char_in_radius_of_tripped_char, x, y, z, "Sprint", "Sensible_Ambush", 1)
+
+				-- CharacterMoveToPosition persists through things like entering combat, so if we just let it be the enemy will move to be right on top of the tripped player
+				-- I'd prefer to try to figure out how to trigger Osi.Event CharacterMoveToCancelled, but there doesn't seem to be an exposed mechanism for it
+				-- Below works by purging the current command queue, which doesn't seem to affect their combat actions at all /shrug
+				-- Should probably also figure out how to unsub from this, but /shrug. Wait for any bug reports i guess
+				Ext.Entity.OnChange("CombatParticipant", function(c)
+					if c.CombatParticipant.CombatHandle then
+						Osi.PurgeOsirisQueue(c.Uuid.EntityUuid)
+					end
+				end, Ext.Entity.Get(char_in_radius_of_tripped_char))
+
 			end
 		end
 	end
 end)
 
--- In your MCM-integrated mod's code
 Ext.ModEvents.BG3MCM["MCM_Setting_Saved"]:Subscribe(function(payload)
 	if not payload or payload.modUUID ~= ModuleUUID or not payload.settingId or not MCM.Get("SA_show_surface_for_radius_settings") then
 		return

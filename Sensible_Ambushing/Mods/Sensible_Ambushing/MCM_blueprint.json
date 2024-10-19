@@ -43,7 +43,7 @@
 						{
 							"Id": "SA_log_level",
 							"Name": "Log level",
-							"Description": "0 = Off, 1 = Error, 2 = Warn, 3 = Info, 4 = Debug, 5 = Trace",
+							"Description": "0 = Off, 1 = Error, 2 = Warn, 3 = Info, 4 = Debug, 5 = Trace (Anything higher than Info will only be logged to the log.txt, not the SE console)",
 							"Handles": {
 								"NameHandle": "h7319446924bd42a783ed7d2a9a65f2c2fg63",
 								"DescriptionHandle": "h27b8458694fd4e2eb7aeb8ca7e6d21eb568d"
