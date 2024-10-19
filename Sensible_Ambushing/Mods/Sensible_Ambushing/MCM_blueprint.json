@@ -30,6 +30,17 @@
 							"Default": true
 						},
 						{
+							"Id": "SA_show_surface_for_radius_settings",
+							"Name": "Generate An Ash Surface To Display How Large Radius-Based Configs Are When Value Is Saved",
+							"Description": "Some features of this mod use radiuses - enabling this config will generate a short-lived Ash surface below the active character to show how large that radius is. Some radius sizes will change depending on the active character - for example, Metal Equipment Radius will be bigger if the active character has metal equipped. Use turn-based mode to extend the lifetime of the radius",
+							"Handles": {
+								"NameHandle": "h9a835be994824d1789346fabb84aded39e6g",
+								"DescriptionHandle": "h573113eeaff24ae9b824ad6fe355a924c9gg"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
 							"Id": "SA_log_level",
 							"Name": "Log level",
 							"Description": "0 = Off, 1 = Error, 2 = Warn, 3 = Info, 4 = Debug, 5 = Trace",
@@ -144,7 +155,7 @@
 									{
 										"SettingId": "SA_sneaking_chars_get_stealth_back",
 										"ExpectedValue": true,
-										"Operator": "=="										
+										"Operator": "=="
 									}
 								]
 							}
@@ -169,7 +180,7 @@
 									{
 										"SettingId": "SA_sneaking_chars_get_stealth_back",
 										"ExpectedValue": true,
-										"Operator": "=="										
+										"Operator": "=="
 									},
 									{
 										"SettingId": "SA_hide_sneaking_char_ghost",
@@ -199,7 +210,7 @@
 									{
 										"SettingId": "SA_sneaking_chars_get_stealth_back",
 										"ExpectedValue": true,
-										"Operator": "=="										
+										"Operator": "=="
 									},
 									{
 										"SettingId": "SA_hide_sneaking_char_ghost",
@@ -234,7 +245,7 @@
 									{
 										"SettingId": "SA_sneaking_chars_get_stealth_back",
 										"ExpectedValue": true,
-										"Operator": "=="										
+										"Operator": "=="
 									},
 									{
 										"SettingId": "SA_hide_sneaking_char_ghost",
@@ -243,6 +254,172 @@
 									},
 									{
 										"SettingId": "SA_sneaking_char_roll_stealth",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"TabId": "extras",
+			"TabName": "Extras",
+			"TabDescription": "Contains extra behavior that complement Ambushing mechanics",
+			"Handles": {
+				"NameHandle": "h015f09eadb734968ba0e930056bf87ac54ff",
+				"DescriptionHandle": "hdb815a8889554109a1b4481e575d770f432c"
+			},
+			"Sections": [
+				{
+					"SectionId": "prone",
+					"SectionName": "When Characters With Metal Equipment Are Knocked Prone",
+					"SectionDescription": "Optional features to trigger when a character wearing metal equipment (weapon, shield, armor) is knocked prone (e.g. when tripping during an ambush, or slipping on ice)",
+					"Handles": {
+						"NameHandle": "h23c514d5cc63423f87b3b4b173e82c0bdcd3",
+						"DescriptionHandle": "h0466f68763724a5293a5730928e87dfb38dc"
+					},
+					"Options": {
+						"IsCollapsible": true
+					},
+					"Settings": [
+						{
+							"Id": "SA_metal_chars_attract_enemies_when_knocked_prone",
+							"Name": "Characters With Metal Equipment Attract Characters Within Radius",
+							"Description": "Characters must: be able to fight, be able to move to your location, and not be in combat already",
+							"Handles": {
+								"NameHandle": "h413375e1c9ae4683a51809a7ff6793cf18ef",
+								"DescriptionHandle": "hf160e6f7489f41d9990ec198b4614c295dc6"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_metal_chars_attract_context_condition",
+							"Name": "When Does This Apply?",
+							"Handles": {
+								"NameHandle": "h0870b7f8328e4e73a3259acce8cf8ef5638c",
+								"ChoicesHandles": [
+									"h54614a1bb4f84c79911793b6d0f6466254d8",
+									"he840c733509a4358878e9f57d74b6e8d4774"
+								]
+							},
+							"Type": "radio",
+							"Options": {
+								"Choices": [
+									"Always",
+									"Only In Combat"
+								]
+							},
+							"Default": "Only In Combat",
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_metal_chars_attract_enemies_when_knocked_prone",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_metal_chars_attract_type_condition",
+							"Name": "Who Can Be Attracted To The Noise?",
+							"Handles": {
+								"NameHandle": "h1d51e6d6c9ed47859562924ac0c2cbdde475",
+								"ChoicesHandles": [
+									"h979141588ed349f699ed3f234b2f4a8efef5",
+									"hec43f582413d41388788d91c87f3aef57d1e",
+									"h552a3874acdf4bdaa3f100134a032e996ea2"
+								]
+							},
+							"Type": "radio",
+							"Options": {
+								"Choices": [ 
+									"All",
+									"Enemies",
+									"Allies"
+								]
+							},
+							"Default": "All",
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_metal_chars_attract_enemies_when_knocked_prone",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_metal_chars_applies_on_condition",
+							"Name": "Who Does This Behavior Trigger For?",
+							"Handles": {
+								"NameHandle": "h8544d8667c684dbab484d88d9ed2f65c5a7d",
+								"ChoicesHandles": [
+									"h979141588ed349f699ed3f234b2f4a8efef5",
+									"h9cf4dd3bba8b4a17878c023942a3f34c3a6f",
+									"hdfb30c4ea3a547c8a9061c82509dd836974f",
+									"hec43f582413d41388788d91c87f3aef57d1e"
+								]
+							},
+							"Type": "radio",
+							"Options": {
+								"Choices": [
+									"All",
+									"Party Members",
+									"Party Members and Allies",
+									"Enemies"
+								]
+							},
+							"Default": "Party Members",
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_metal_chars_attract_enemies_when_knocked_prone",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_metal_equipment_base_radius",
+							"Name": "Base Radius",
+							"Description": "How large the base radius is - essentially, if this effect were to occur with no metal equipped, how large would it be? Default is 5",
+							"Handles": {
+								"NameHandle": "h0ef41333337e43b2bfe61d014c0d92f22980",
+								"DescriptionHandle": "h8d272f68a83a41f4b9bbbb7b96834640f586"
+							},
+							"Type": "float",
+							"Default": 5,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_metal_chars_attract_enemies_when_knocked_prone",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_metal_equipment_count_weight",
+							"Name": "Weight of Each Equipped Metal Item",
+							"Description": "How much each piece of metal equipment expands the base radius - calculation is (Base Radius * (Weight * Number of Pieces Equipped)). For example, if your base radius is 5, this value is 1, and you have 2 pieces of metal gear equipped, that's (5 * (1 * 2)) = 10. Default is 1",
+							"Handles": {
+								"NameHandle": "h6b7cc98692df45329a2b5112a7956dc83323",
+								"DescriptionHandle": "h49614c2eb2a5402c9d17009f2043377634g6"
+							},
+							"Type": "float",
+							"Default": 1,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_metal_chars_attract_enemies_when_knocked_prone",
 										"ExpectedValue": true,
 										"Operator": "=="
 									}

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<contentList>
+    <content contentuid="h5da6af2254f94a45ac836d6905f1c8d19c98" version="1">Rules</content>
+    <content contentuid="h353a00fdee594cae942e2bb1a1fa4cceff05" version="1">Tweak the rules</content>
+    <!-- START GENERAL MCM -->
+    <content contentuid="hc18d4c4b444649f2a4599b69f0ad518a90g4" version="1">General</content>
+    <content contentuid="h0a2f540d60324c1ea424e17880655b1c7e19" version="1">General settings</content>
+    <content contentuid="h2bad029164ee46eaa9409eb6dc927eb73de6" version="1">General Mod Behavior</content>
+    <content contentuid="h5c8cebd5dd4a4aaba84c500bc46c48fcf59a" version="1">Enable Mod</content>
+    <content contentuid="h055b4e7efe9b414791aa90fc921eecd668e4" version="1">Enables or disables the mod</content>
+    <content contentuid="h9a835be994824d1789346fabb84aded39e6g" version="1">Generate An Ash Surface To Display How Large Radius-Based Configs Are When Value Is Saved</content>
+    <content contentuid="h573113eeaff24ae9b824ad6fe355a924c9gg" version="1">Some features of this mod use radiuses - enabling this config will generate a short-lived Ash surface below the active character to show how large that radius is. Some radius sizes will change depending on the active character - for example, Metal Equipment Radius will be bigger if the active character has metal equipped. Use turn-based mode to extend the lifetime of the radius</content>
+    <content contentuid="h7319446924bd42a783ed7d2a9a65f2c2fg63" version="1">Log Level</content>
+    <content contentuid="h27b8458694fd4e2eb7aeb8ca7e6d21eb568d" version="1">0 = Off, 1 = Error, 2 = Warn, 3 = Info, 4 = Debug, 5 = Trace (Anything higher than Info will only be logged to the log.txt, not the SE console)</content>
+    <!-- END GENERAL MCM -->
+    <!-- START SUMMON MCM -->
+    <content contentuid="h89d8763349d945bcb7887ea71c0efaa5ef2b" version="1">Summons</content>
+    <content contentuid="h7c3f599fa03a4e04afde6b8234149b35470c" version="1">Rules regarding Player Summons</content>
+    <content contentuid="h412fa11bfd57438c86747596d17c3a9702b6" version="1">Summons Copy Their Summoner</content>
+    <content contentuid="hcb7d588012cd407e8c30cc2fd7a5dd9b8073" version="1">If enabled, Summons will automatically be considered eligible to join the ambush if their summoner is, and have the same effects applied (e.g. if the summoner's sneak is restored when entering combat, the summon will also be sneaking, even if they weren't before combat) - if disabled, they will be independently evaluated and processed using the same rules and behavior</content>
+    <!-- END SUMMON MCM -->
+    <!-- START SNEAKING MCM -->
+    <content contentuid="hb1bb88369ae94b318fec0c68d9e079f3dge7" version="1">Sneaking</content>
+    <content contentuid="h9a13c55410c0458aa57d56e85163dceadbc7" version="1">Controls configurations around Stealth</content>
+    <content contentuid="h06c3c574e4904a82a9945e1c73af93ee7d4e" version="1">Sneaking Characters Can Join Ambush</content>
+    <content contentuid="h3cf3d320177447e79d68a6c8ac8f819e0f92" version="1">BG3 prevents characters that are sneaking from entering combat - as a workaround, we bring eligible characters out of sneaking, have them enter combat, then have them hide again. Disable this if you don't want sneaking characters to be eligible</content>
+    <content contentuid="h1f5c4ef82f62479b9a1420dfbc14f24egf44" version="1">Sneaking Characters Retain Stealth During Ambush</content>
+    <content contentuid="h36b2821b51b64b10b4dfab50f8a57d1353f6" version="1">Gives characters that were sneaking before combat started their stealth back when entering the ambush</content>
+    <content contentuid="h87a05633f1fd4977af72671725d932774242" version="1">Enemies Don't Know Where To Look For Ambushing Characters</content>
+    <content contentuid="h507d0ae7cfe543dbb7ebb4123cf4a84abgge" version="1">Since we add characters to combat than sneak them, BG3 adds a 'ghost' that indicates where a character stealthed, so enemies can look for them there. Enabling this option 'hides' that ghost, effectively making it so enemies don't know they're being ambushed</content>
+    <content contentuid="ha1a64b7769144a01b30505996c655224baa9" version="1">Ambushing Characters Roll Passive Stealth Skill Check Against Each Enemies Perception</content>
+    <content contentuid="heb8c356b0e0c49b9b7316f1ddc11d93fd8a5" version="1">Each character that is sneaking during the ambush will have to make this check to keep their 'ghost' hidden - if they fail, they remain stealthed, but the enemy knows to look at their location (whether or not they actually do is up to the AI)</content>
+    <content contentuid="h2070676865bd4f51a578de226461723261a8" version="1">Ambushing Chars Roll Their Initial Passive Stealth Check With Advantage</content>
+    <content contentuid="hb4b4e0883aa042559c3a02b5fa9ad43850c1" version="1">Only applies to the skill check initiated by this mod - if the character already has disadvantage (e.g. wearing heavy armor), they will roll without dis/advantage</content>
+    <content contentuid="h50a2f3e1579f4e9d8bf794d7f797c3e2gfd2" version="1">Ambushing Characters Can Trip</content>
+    <content contentuid="h46c8d4304532492eb51cdf5268bda1ce3fd0" version="1">If a sneaking character critically fails during their initial Stealth check, they will be knocked prone and lose their sneak status</content>
+    <!-- END SNEAKING MCM -->
+
+    <!-- START EXTRAS MCM -->
+    <content contentuid="h015f09eadb734968ba0e930056bf87ac54ff" version="1">Extras</content>
+    <content contentuid="hdb815a8889554109a1b4481e575d770f432c" version="1">Contains extra behavior that complement Ambushing mechanics</content>    
+    <!-- START METAL PRONE MCM -->
+    <content contentuid="h23c514d5cc63423f87b3b4b173e82c0bdcd3" version="1">When Characters With Metal Equipment Are Knocked Prone</content>
+    <content contentuid="h0466f68763724a5293a5730928e87dfb38dc" version="1">Optional features to trigger when a character wearing metal equipment (weapon, shield, armor) is knocked prone (e.g. when tripping during an ambush, or slipping on ice)</content>
+    <content contentuid="h413375e1c9ae4683a51809a7ff6793cf18ef" version="1">Characters wearing metal attract nearby characters</content>
+    <content contentuid="hf160e6f7489f41d9990ec198b4614c295dc6" version="1">Can attract enemies and allies as configured below. Characters must: be able to fight, be able to move to your location, and not be in combat already</content>
+    <content contentuid="h0ef41333337e43b2bfe61d014c0d92f22980" version="1">Base Radius</content>
+    <content contentuid="h8d272f68a83a41f4b9bbbb7b96834640f586" version="1">How large the base radius is - essentially, if this effect were to occur with no metal equipped, how large would it be? Default is 5</content>
+    <content contentuid="h6b7cc98692df45329a2b5112a7956dc83323" version="1">Weight of Each Equipped Metal Item</content>
+    <content contentuid="h49614c2eb2a5402c9d17009f2043377634g6" version="1">How much each piece of metal equipment expands the base radius - calculation is (Base Radius * (Weight * Number of Pieces Equipped)). For example, if your base radius is 5, this value is 1, and you have 2 pieces of metal gear equipped, that's (5 * (1 * 2)) = 10. Default is 1</content>
+    <content contentuid="h0870b7f8328e4e73a3259acce8cf8ef5638c" version="1">When Does This Apply?</content>
+    <content contentuid="h6032f52614f343779cca32cfaae1d2ec84d2" version="1">Contexts in which to apply this behavior</content>
+    <content contentuid="he840c733509a4358878e9f57d74b6e8d4774" version="1">Only In Combat</content>
+    <content contentuid="h54614a1bb4f84c79911793b6d0f6466254d8" version="1">Always</content>
+    <content contentuid="h1d51e6d6c9ed47859562924ac0c2cbdde475" version="1">Who Can Be Attracted To The Noise?</content>
+    <content contentuid="he808fa8508e847f19cf749fbb87ae924b89a" version="1">Types of Characters that can be attracted</content>
+    <content contentuid="h979141588ed349f699ed3f234b2f4a8efef5" version="1">All</content>
+    <content contentuid="hec43f582413d41388788d91c87f3aef57d1e" version="1">Enemies</content>
+    <content contentuid="h9cf4dd3bba8b4a17878c023942a3f34c3a6f" version="1">Party Members</content>
+    <content contentuid="h8544d8667c684dbab484d88d9ed2f65c5a7d" version="1">Who Does This Behavior Trigger For?</content>
+    <content contentuid="hdfb30c4ea3a547c8a9061c82509dd836974f" version="1">Party Members and Allies</content>
+    <content contentuid="h552a3874acdf4bdaa3f100134a032e996ea2" version="1">Allies</content>
+    <!-- END METAL PRONE MCM -->
+    <!-- END EXTRAS MCM -->
+</contentList>

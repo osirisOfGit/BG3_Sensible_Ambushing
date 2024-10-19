@@ -17,7 +17,7 @@
     <!-- END GENERAL MCM -->
 
     <!-- START SUMMON MCM -->
-    <content contentuid="h89d8763349d945bcb7887ea71c0efaa5ef2b">
+    <content contentuid="h89d8763349d945bcb7887ea71c0efaa5ef2b" version="1">
         Summons
     </content>
     <content contentuid="h7c3f599fa03a4e04afde6b8234149b35470c" version="1">
@@ -90,4 +90,29 @@
 
     <content contentuid="h50a2f3e1579f4e9d8bf794d7f797c3e2gfd2" version="1">Ambushing Characters Can Trip</content>
     <content contentuid="h46c8d4304532492eb51cdf5268bda1ce3fd0" version="1">If a sneaking character critically fails during their initial Stealth check, they will be knocked prone and lose their sneak status</content>
+    <content contentuid="h015f09eadb734968ba0e930056bf87ac54ff" version="1">Extras</content>
+    <content contentuid="hdb815a8889554109a1b4481e575d770f432c" version="1">Contains extra behavior that complement Ambushing mechanics</content>
+    <content contentuid="h9a835be994824d1789346fabb84aded39e6g" version="1">Generate an Ash Surface to display how large radius-based configs are Are When Value Is Saved</content>
+    <content contentuid="h573113eeaff24ae9b824ad6fe355a924c9gg" version="1">Some configs below use radiuses - enabling this config will generate a short-lived Ash surface below the active character to show how large that radius is. Some radius sizes will change depending on the active character - for example, Metal Equipment Radius will be bigger if the active character has metal equipped</content>
+    <content contentuid="h23c514d5cc63423f87b3b4b173e82c0bdcd3" version="1">When Characters With Metal Equipment Are Knocked Prone</content>
+    <content contentuid="h0466f68763724a5293a5730928e87dfb38dc" version="1">Optional features to trigger when a character wearing metal equipment (weapon, shield, armor) is knocked prone (e.g. when tripping during an ambush, or slipping on ice)</content>
+    <content contentuid="h413375e1c9ae4683a51809a7ff6793cf18ef" version="1">Characters wearing metal attract nearby characters</content>
+    <content contentuid="hf160e6f7489f41d9990ec198b4614c295dc6" version="1">Can attract enemies and allies as configured below. Characters must: be able to fight, be able to move to your location, and not be in combat already</content>
+    <content contentuid="h0ef41333337e43b2bfe61d014c0d92f22980" version="1">Base Radius</content>
+    <content contentuid="h8d272f68a83a41f4b9bbbb7b96834640f586" version="1">How large the base radius is - essentially, if this effect were to occur with no metal equipped, how large would it be? Default is 5</content>
+    <content contentuid="h6b7cc98692df45329a2b5112a7956dc83323" version="1">Weight of Each Equipped Metal Item</content>
+    <content contentuid="h49614c2eb2a5402c9d17009f2043377634g6" version="1">How much each piece of metal equipment expands the base radius - calculation is (Base_Radius * (Weight * Num Pieces Equipped)). For example, if your base radius is 3, and this value is 5, and you have 2 pieces of metal gear equipped, that's (3 * (5 * 2)) = 30 - Default is 1</content>
+    <content contentuid="h0870b7f8328e4e73a3259acce8cf8ef5638c" version="1">When Does This Apply?</content>
+    <content contentuid="h6032f52614f343779cca32cfaae1d2ec84d2" version="1">Contexts in which to apply this behavior</content>
+    <content contentuid="he840c733509a4358878e9f57d74b6e8d4774" version="1">Only In Combat</content>
+    <content contentuid="h54614a1bb4f84c79911793b6d0f6466254d8" version="1">Always</content>
+    <content contentuid="h1d51e6d6c9ed47859562924ac0c2cbdde475" version="1">Who Can Be Attacted To The Noise?</content>
+    <content contentuid="he808fa8508e847f19cf749fbb87ae924b89a" version="1">Types of Characters that can be attracted</content>
+    <content contentuid="h979141588ed349f699ed3f234b2f4a8efef5" version="1">All</content>
+    <content contentuid="hec43f582413d41388788d91c87f3aef57d1e" version="1">Enemies</content>
+    <content contentuid="h9cf4dd3bba8b4a17878c023942a3f34c3a6f" version="1">Party Members</content>
+    <content contentuid="h8544d8667c684dbab484d88d9ed2f65c5a7d" version="1">Who Does This Behavior Trigger For?</content>
+    <content contentuid="h4ae18ad20f374158939434a055eabe08741d" version="1">Allies includes party members and NPC allies</content>
+    <content contentuid="hdfb30c4ea3a547c8a9061c82509dd836974f" version="1">Party Members and Allies</content>
+    <content contentuid="h552a3874acdf4bdaa3f100134a032e996ea2" version="1">Allies</content>
 </contentList>
