@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
+- Characters 'tripping' if they fail their ambush stealth check, going prone for a round
+- Characters wearing metal armor can attract nearby allies/enemies to their position when going prone
+  - This can apply to any character in the game - ally/enemy determinations are made based on the party though (i.e. only attracting allies, but triggering the effect on enemies, will attract allies of the player, not the enemy)
+- Generating an ash surface when changing any configs that deal with radii
+
+## Changed
+
+- Tweaked MCM configs
+
+# [0.1.0]
+
+## Added
+
 - Preventing enemies from knowing where sneaking chars are during the ambush, unless the char fails their passive Stealth check against the enemy's Perception
 - MCM options for enabling the mod and changing the log level
 

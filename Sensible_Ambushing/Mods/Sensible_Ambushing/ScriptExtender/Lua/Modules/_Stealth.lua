@@ -53,7 +53,7 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 									"SkillCheckRoll",
 									"Stealth",
 									"Perception",
-									MCM.Get("SA_sneaking_char_roll_stealth_with_advantage") == true and 1 or 0,
+									MCM.Get("SA_sneaking_char_roll_stealth_with_advantage") and 1 or 0,
 									0,
 									"Sensible_Ambush_Stealth_Check_" .. ModuleUUID)
 							end
@@ -67,17 +67,28 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 	return pre_ambush_functions, post_ambush_functions
 end)
 
-Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, roller, rollSubject, resultType, isActiveRoll, criticality)
+Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, roller, rollSubject, resultType, _, criticality)
 	if eventName == "Sensible_Ambush_Stealth_Check_" .. ModuleUUID then
-		Logger:BasicTrace("Processing Ambush Stealth check for %s against %s with result %s",
+		Logger:BasicTrace("Processing Ambush Stealth check for %s against %s with result %s and criticality %s",
 			roller,
 			rollSubject,
-			resultType)
+			resultType,
+			criticality)
+
+		if MCM.Get("SA_sneaking_chars_can_trip") and criticality == 2 then -- Critical Fail
+			Logger:BasicDebug("%s critically failed their stealth check!", roller)
+
+			Osi.ApplyStatus(roller, "PRONE", 1)
+
+			stealth_tracker[roller] = nil
+			return
+		end
 
 		for char, originalGhost in pairs(stealth_tracker) do
 			if char == roller then
 				if resultType == 0 then
 					Logger:BasicDebug("%s failed their stealth check, so the enemy knows they're being ambushed", roller)
+
 					local ent = Ext.Entity.Get(roller)
 					ent.Stealth.Position = originalGhost
 					ent:Replicate("Stealth")
