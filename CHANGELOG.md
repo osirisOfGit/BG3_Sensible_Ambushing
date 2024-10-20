@@ -5,12 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [0.2.1]
+
+## Fixed
+
+- Wrap prone logic in enabled flag
+
 # [0.2.0]
 
 ## Added
 
-- Characters 'tripping' if they fail their ambush stealth check, going prone for a round
-- Characters wearing metal armor can attract nearby allies/enemies to their position when going prone
+- Characters 'tripping' if they critically fail their ambush stealth check, going prone for a round
+- Characters with metal equipped can attract nearby allies/enemies to their position when going prone
   - This can apply to any character in the game - ally/enemy determinations are made based on the party though (i.e. only attracting allies, but triggering the effect on enemies, will attract allies of the player, not the enemy)
 - Generating an ash surface when changing any configs that deal with radii
 

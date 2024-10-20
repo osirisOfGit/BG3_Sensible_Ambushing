@@ -30,7 +30,7 @@ local function calculateRadius(metalEquipmentCount)
 end
 
 Ext.Osiris.RegisterListener("StatusApplied", 4, "before", function(character, status, _, _)
-	if status == "PRONE" and MCM.Get("SA_metal_chars_attract_enemies_when_knocked_prone") then
+	if MCM.Get("SA_enabled") and status == "PRONE" and MCM.Get("SA_metal_chars_attract_enemies_when_knocked_prone") then
 		if MCM.Get("SA_metal_chars_attract_context_condition") == Ext.Loca.GetTranslatedString("h54614a1bb4f84c79911793b6d0f6466254d8")
 			or Osi.IsInCombat(character) == 1
 		then
