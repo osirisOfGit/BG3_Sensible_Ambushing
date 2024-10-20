@@ -1,5 +1,5 @@
 {
     "RequiredVersion": 20,
-    "ModTable": "Automatic_Inventory_Manager",
+    "ModTable": "Sensible_Ambushing",
     "FeatureFlags": ["Lua"]
 }
