@@ -20,7 +20,7 @@ Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, rolle
 	end
 end)
 
-Ext.Osiris.RegisterListener("StatusApplied", 4, "before", function(object, status, causee, storyActionID)
+Ext.Osiris.RegisterListener("StatusApplied", 4, "after", function(object, status, causee, storyActionID)
 	if MCM.Get("SA_enabled") then
 		for _, func in pairs(events["StatusApplied"]) do
 			func(object, status, causee, storyActionID)

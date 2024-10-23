@@ -44,13 +44,14 @@ Ext.Osiris.RegisterListener("UsingSpellOnTarget", 6, "before", function(attacker
 	end
 end)
 
-EventCoordinator:RegisterEventProcessor("StatusApplied",function(surprisedCharacter, status, causee, storyActionID)
+EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedCharacter, status, causee, storyActionID)
 	if status == "SURPRISED" then
-		Osi.RequestActiveRoll(surprisedCharacter,
+		-- https://bg3.norbyte.dev/search?q=type%3ADifficultyClass -- WTF Larian
+		Osi.RequestPassiveRoll(surprisedCharacter,
 			causee,
 			"SavingThrowRoll",
-			"Will",
-			20,
+			"Wisdom",
+			"33cb7d74-7b51-4e5c-91ed-ff18cb8553bc", -- HiddenPerception_Hard
 			0,
 			"Sensible_Ambush_Resist_Surprise_Roll_" .. ModuleUUID
 		)
@@ -58,35 +59,15 @@ EventCoordinator:RegisterEventProcessor("StatusApplied",function(surprisedCharac
 end)
 
 EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, roller, rollSubject, resultType, _, criticality)
-	if eventName == "Sensible_Ambush_Stealth_Check_" .. ModuleUUID then
-		Logger:BasicTrace("Processing Ambush Stealth check for %s against %s with result %s and criticality %s",
+	if eventName == "Sensible_Ambush_Resist_Surprise_Roll_" .. ModuleUUID and Osi.HasActiveStatus(roller, "SURPRISED") == 1 then
+		Logger:BasicTrace("Processing Ambush Resist Surprise check for %s against %s with result %s and criticality %s",
 			roller,
 			rollSubject,
 			resultType,
 			criticality)
 
-		if MCM.Get("SA_sneaking_chars_can_trip") and criticality == 2 then -- Critical Fail
-			Logger:BasicDebug("%s critically failed their stealth check!", roller)
-
-			Osi.ApplyStatus(roller, "PRONE", 1)
-
-			stealth_tracker[roller] = nil
-			return
-		end
-
-		for char, originalGhost in pairs(stealth_tracker) do
-			if char == roller then
-				if resultType == 0 then
-					Logger:BasicDebug("%s failed their stealth check, so the enemy knows they're being ambushed", roller)
-
-					local ent = Ext.Entity.Get(roller)
-					ent.Stealth.Position = originalGhost
-					ent:Replicate("Stealth")
-
-					stealth_tracker[char] = nil
-				end
-				return
-			end
+		if resultType == 1 then
+			Osi.RemoveStatus(roller, "SURPRISED")
 		end
 	end
 end)
