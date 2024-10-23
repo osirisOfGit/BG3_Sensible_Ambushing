@@ -7,6 +7,7 @@
 			"label": "bg3Continue",
 			"type": "shell",
 			// mklink /J "D:\GOG\Baldurs Gate 3\Data\Mods\Sensible_Ambushing" "D:\Mods\BG3 Modder MultiTool\Sensible_Ambushing\Sensible_Ambushing\Mods\Sensible_Ambushing"
+			// mklink /J "D:\GOG\Baldurs Gate 3\Data\Public\Sensible_Ambushing" "D:\Mods\BG3 Modder MultiTool\Sensible_Ambushing\Sensible_Ambushing\Public\Sensible_Ambushing"
 			// mklink "D:\GOG\Baldurs Gate 3\Data\Localization\English\Sensible_Ambushing.loca" "D:\Mods\BG3 Modder MultiTool\Sensible_Ambushing\Sensible_Ambushing\Localization\English\Sensible_Ambushing.loca"
 			"windows": {
 				"command": "Start-Process",
