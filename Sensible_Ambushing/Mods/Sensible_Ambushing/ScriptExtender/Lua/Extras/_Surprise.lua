@@ -1,16 +1,4 @@
--- Characters have a chance to resist surprise based on will save
--- "Ghost" of ambusher changes position depending on their obscuredState and stealth save?
 -- If within range of minor illusion, crit threshold goes down?
-
---[[
-Tested:
-- SA_surprise_applies_to_condition
-	- Enemies
-	- Nobody
-	- Party Members
-	- Party Members and Allies
-- DC
-]]
 
 -- Maps to Sensible_Ambushing\Public\Sensible_Ambushing\DifficultyClasses\DifficultyClasses.lsx
 Extra_Surprise = {}
