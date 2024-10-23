@@ -17,6 +17,7 @@ function AmbushDirector:RegisterModule(modUUID, moduleName, moduleFunc)
 	Logger:BasicInfo("Mod %s successfully added ambush module %s", modName, moduleName)
 end
 
+Ext.Require("Extras/_Surprise.lua")
 Ext.Require("Modules/_Stealth.lua")
 
 

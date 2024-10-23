@@ -67,7 +67,7 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 	return pre_ambush_functions, post_ambush_functions
 end)
 
-Ext.Osiris.RegisterListener("RollResult", 6, "before", function(eventName, roller, rollSubject, resultType, _, criticality)
+EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, roller, rollSubject, resultType, _, criticality)
 	if eventName == "Sensible_Ambush_Stealth_Check_" .. ModuleUUID then
 		Logger:BasicTrace("Processing Ambush Stealth check for %s against %s with result %s and criticality %s",
 			roller,

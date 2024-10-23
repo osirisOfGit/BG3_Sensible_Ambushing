@@ -28,3 +28,5 @@ but it's not physically possible to hide the ghost just for the player - it need
 May not be possible unless i come up with a custom stealth system
 
 - 'Holding' actions, triggering like a reaction when the enemy is in range
+
+- Give veteran characters (e.g. slaver in the underdark) a higher chance to resist surprise/detect ambushes

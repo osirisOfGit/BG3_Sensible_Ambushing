@@ -29,8 +29,8 @@ local function calculateRadius(metalEquipmentCount)
 	return MCM.Get("SA_metal_equipment_base_radius") * (MCM.Get("SA_metal_equipment_count_weight") * metalEquipmentCount)
 end
 
-Ext.Osiris.RegisterListener("StatusApplied", 4, "before", function(character, status, _, _)
-	if MCM.Get("SA_enabled") and status == "PRONE" and MCM.Get("SA_metal_chars_attract_enemies_when_knocked_prone") then
+EventCoordinator:RegisterEventProcessor("StatusApplied", function(character, status, _, _)
+	if status == "PRONE" and MCM.Get("SA_metal_chars_attract_enemies_when_knocked_prone") then
 		if MCM.Get("SA_metal_chars_attract_context_condition") == Ext.Loca.GetTranslatedString("h54614a1bb4f84c79911793b6d0f6466254d8")
 			or Osi.IsInCombat(character) == 1
 		then
@@ -89,7 +89,7 @@ Ext.Osiris.RegisterListener("EntityEvent", 2, "before", function(char_in_radius_
 				local x, y, z = Osi.GetPosition(char_that_tripped)
 
 				Logger:BasicTrace("%s passed the MCM checks and is going to sprint to %d/%d/%d", char_in_radius_of_tripped_char, x, y, z)
-				
+
 				Osi.CharacterMoveToPosition(char_in_radius_of_tripped_char, x, y, z, "Sprint", "Sensible_Ambush", 1)
 
 				-- CharacterMoveToPosition persists through things like entering combat, so if we just let it be the enemy will move to be right on top of the tripped player
@@ -101,7 +101,6 @@ Ext.Osiris.RegisterListener("EntityEvent", 2, "before", function(char_in_radius_
 						Osi.PurgeOsirisQueue(c.Uuid.EntityUuid)
 					end
 				end, Ext.Entity.Get(char_in_radius_of_tripped_char))
-
 			end
 		end
 	end
