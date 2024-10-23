@@ -337,7 +337,7 @@
 							},
 							"Type": "radio",
 							"Options": {
-								"Choices": [ 
+								"Choices": [
 									"All",
 									"Enemies",
 									"Allies"
@@ -422,6 +422,117 @@
 										"SettingId": "SA_metal_chars_attract_enemies_when_knocked_prone",
 										"ExpectedValue": true,
 										"Operator": "=="
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"SectionId": "surprise",
+					"SectionName": "Surprise",
+					"SectionDescription": "Configure behavior around the Surprise Mechanic",
+					"Handles": {
+						"NameHandle": "h1ed462f7da3f4afa81806ef2633f5551c86c",
+						"DescriptionHandle": "h89410b5953234ebe9c7b99f44ca5b9db5834"
+					},
+					"Options": {
+						"IsCollapsible": true
+					},
+					"Settings": [
+						{
+							"Id": "SA_surprise_enabled",
+							"Name": "Enable Sensible Ambush's Conditions For Triggering Surprise",
+							"Description": "Sensible Ambush will trigger Surprise against a group if anything is done to them from stealth - this includes any attack or spell, including those not supported by the game, like grenades (NOTE: This currently only applies when you click directly on an enemy - I haven't figured out zone logic yet). Disable this if you just want vanilla behavior - below options will still apply either way",
+							"Handles": {
+								"NameHandle": "heb246fdfdf1744a08fa9ce95fba5c09e03e6",
+								"DescriptionHandle": "h8182f9ab420e4348b0b6d96e440df7cb26cd"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_surprise_applies_to_condition",
+							"Name": "Who Can Be Surprised?",
+							"Description": "If a group is excluded (i.e. you only select Enemies, so Party Members and Allies are excluded), they will have the Surprise condition automatically removed when applied (We can't prevent the base game from applying it in the first place, we can only remove it for free)",
+							"Handles": {
+								"NameHandle": "h6783daa44ee54aa0a9e90585b44fe6d9022g",
+								"DescriptionHandle": "h48bd847b96c746f195f28e2d3ff1b704c5c3",
+								"ChoicesHandles": [
+									"h979141588ed349f699ed3f234b2f4a8efef5",
+									"h9cf4dd3bba8b4a17878c023942a3f34c3a6f",
+									"hdfb30c4ea3a547c8a9061c82509dd836974f",
+									"hec43f582413d41388788d91c87f3aef57d1e",
+									"h7eb270a054fe440080ce8a1f664135da3ade"
+								]
+							},
+							"Type": "radio",
+							"Options": {
+								"Choices": [
+									"All",
+									"Party Members",
+									"Party Members and Allies",
+									"Enemies",
+									"Nobody"
+								]
+							},
+							"Default": "All"
+						},
+						{
+							"Id": "SA_resist_surprise_ability",
+							"Name": "What Ability Is Used To Resist Surprise?",
+							"Description": "Dictates the type of Saving Throw - if 'None' is selected, the Surprise Status will follow vanilla rules",
+							"Type": "radio",
+							"Options": {
+								"Choices": [
+									"Wisdom",
+									"Constitution",
+									"Intelligence",
+									"None"
+								]
+							},
+							"Default": "Wisdom",
+							"Handles": {
+								"NameHandle": "h732291d09eeb48dca8396a91a8686f3434c3",
+								"DescriptionHandle": "hbb8d63bb7e1c44b0ab1811a2efa89c907149",
+								"ChoicesHandles": [
+									"h085741bbbd76439f9e0e9acf63b62b59acd3",
+									"h5fdeb31bb2c14c448f57c866b2f25e5471g6",
+									"h30e27f6c43ac4a83902d15191975725ceed8",
+									"h4a5bd083bf284046bbf40c1c0a4844878c79"
+								]
+							},
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_surprise_applies_to_condition",
+										"ExpectedValue": "Nobody",
+										"Operator": "!="
+									}
+								]
+							}
+						},
+						{
+							"Id": "SA_resist_surprise_dc",
+							"Name": "What's the DC on the Saving Throw for Surprise?",
+							"Description": "Uses the Ability/Skill selected above",
+							"Type": "drag_int",
+							"Options": {
+								"Min": 1,
+								"Max": 30
+							},
+							"Default": 20,
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_surprise_applies_to_condition",
+										"ExpectedValue": "Nobody",
+										"Operator": "!="
+									},
+									{
+										"SettingId": "SA_resist_surprise_ability",
+										"ExpectedValue": "None",
+										"Operator": "!="
 									}
 								]
 							}

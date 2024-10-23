@@ -19,7 +19,6 @@ end
 
 Ext.Require("Modules/_Stealth.lua")
 
-
 local function IsCharacterEligibleToJoinAmbush(combatGuid, character)
 	local pre_ambush_functions = {}
 	local post_ambush_functions = {}
