@@ -442,8 +442,8 @@
 					"Settings": [
 						{
 							"Id": "SA_surprise_enabled",
-							"Name": "Enable Surprise Ambush's Conditions For Triggering Surprise",
-							"Description": "Sensible Ambush will trigger Surprise against a group if they're attacked from stealth - this includes any attack, including those not supported by the game, like grenades. Disable this if you just want vanilla behavior - below options will still apply either way",
+							"Name": "Enable Sensible Ambush's Conditions For Triggering Surprise",
+							"Description": "Sensible Ambush will trigger Surprise against a group if anything is done to them from stealth - this includes any attack or spell, including those not supported by the game, like grenades (NOTE: This currently only applies when you click directly on an enemy - I haven't figured out zone logic yet). Disable this if you just want vanilla behavior - below options will still apply either way",
 							"Handles": {
 								"NameHandle": "heb246fdfdf1744a08fa9ce95fba5c09e03e6",
 								"DescriptionHandle": "h8182f9ab420e4348b0b6d96e440df7cb26cd"
@@ -479,16 +479,15 @@
 							"Default": "All"
 						},
 						{
-							"Id": "SA_resist_surprise_ability_skill",
-							"Name": "What Skill/Ability Is Used To Resist Surprise?",
-							"Description": "The Skill or Ability to use to make the Saving Throw - if 'None' is selected, the Surprise Status will always apply (to the characters within the group selected above, unless said character uses some other mechanism to be immune to surprise).",
+							"Id": "SA_resist_surprise_ability",
+							"Name": "What Ability Is Used To Resist Surprise?",
+							"Description": "Dictates the type of Saving Throw - if 'None' is selected, the Surprise Status will follow vanilla rules",
 							"Type": "radio",
 							"Options": {
 								"Choices": [
 									"Wisdom",
 									"Constitution",
 									"Intelligence",
-									"Perception",
 									"None"
 								]
 							},
@@ -500,7 +499,6 @@
 									"h085741bbbd76439f9e0e9acf63b62b59acd3",
 									"h5fdeb31bb2c14c448f57c866b2f25e5471g6",
 									"h30e27f6c43ac4a83902d15191975725ceed8",
-									"h72ac7c025891449294f3e3137fa000764972",
 									"h4a5bd083bf284046bbf40c1c0a4844878c79"
 								]
 							},
@@ -532,7 +530,7 @@
 										"Operator": "!="
 									},
 									{
-										"SettingId": "SA_resist_surprise_ability_skill",
+										"SettingId": "SA_resist_surprise_ability",
 										"ExpectedValue": "None",
 										"Operator": "!="
 									}

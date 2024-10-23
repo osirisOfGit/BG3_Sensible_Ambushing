@@ -5,11 +5,6 @@
         <node id="root">
             <children>
 				<node id="DifficultyClass">
-					<attribute id="Difficulties" type="LSString" value="0"/>
-					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_0"/>
-					<attribute id="UUID" type="guid" value="7f084717-d919-4d2c-9947-d6b3925c7f92"/>
-				</node>
-				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="1"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_1"/>
 					<attribute id="UUID" type="guid" value="a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6"/>
@@ -117,47 +112,47 @@
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="22"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_22"/>
-					<attribute id="UUID" type="guid" value="d2e3f4a5-b6c7-8d9e-0f1a-2b3c4d5e6f7g"/>
+					<attribute id="UUID" type="guid" value="00c337b5-b90e-44d4-aac6-1c0ea95e2b08"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="23"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_23"/>
-					<attribute id="UUID" type="guid" value="e3f4a5b6-c7d8-9e0f-1a2b-3c4d5e6f7g8h"/>
+					<attribute id="UUID" type="guid" value="b73d47fb-f929-403d-822c-d0329ef37153"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="24"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_24"/>
-					<attribute id="UUID" type="guid" value="f4a5b6c7-d8e9-0f1a-2b3c-4d5e6f7g8h9i"/>
+					<attribute id="UUID" type="guid" value="02f742de-b91b-431c-b77f-d1b6b0b07e20"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="25"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_25"/>
-					<attribute id="UUID" type="guid" value="a5b6c7d8-e9f0-1a2b-3c4d-5e6f7g8h9i0j"/>
+					<attribute id="UUID" type="guid" value="b620873e-d452-4104-8f44-f7f787f7d574"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="26"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_26"/>
-					<attribute id="UUID" type="guid" value="b6c7d8e9-f0a1-2b3c-4d5e-6f7g8h9i0j1k"/>
+					<attribute id="UUID" type="guid" value="e4bf19c6-6a5b-4c1f-a495-910d5cbf15df"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="27"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_27"/>
-					<attribute id="UUID" type="guid" value="c7d8e9f0-a1b2-3c4d-5e6f-7g8h9i0j1k2l"/>
+					<attribute id="UUID" type="guid" value="0533bdb9-5468-4ac7-8298-02cb74a8f3e5"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="28"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_28"/>
-					<attribute id="UUID" type="guid" value="d8e9f0a1-b2c3-4d5e-6f7g-8h9i0j1k2l3m"/>
+					<attribute id="UUID" type="guid" value="0d90c43a-e98c-4e29-9fad-53d1dd6609b8"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="29"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_29"/>
-					<attribute id="UUID" type="guid" value="e9f0a1b2-c3d4-5e6f-7g8h-9i0j1k2l3m4n"/>
+					<attribute id="UUID" type="guid" value="03eab834-e570-4b3f-ad70-00d055fb97dc"/>
 				</node>
 				<node id="DifficultyClass">
 					<attribute id="Difficulties" type="LSString" value="30"/>
 					<attribute id="Name" type="LSString" value="Sensible_Ambushing_DC_30"/>
-					<attribute id="UUID" type="guid" value="f0a1b2c3-d4e5-6f7g-8h9i-0j1k2l3m4n5o"/>
+					<attribute id="UUID" type="guid" value="32dfc49c-5331-48f3-ae05-f731b523b723"/>
 				</node>
             </children>
         </node>

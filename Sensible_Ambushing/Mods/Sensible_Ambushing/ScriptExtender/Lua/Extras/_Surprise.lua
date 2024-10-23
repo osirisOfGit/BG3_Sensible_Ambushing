@@ -2,39 +2,49 @@
 -- "Ghost" of ambusher changes position depending on their obscuredState and stealth save?
 -- If within range of minor illusion, crit threshold goes down?
 
+--[[
+Tested:
+- SA_surprise_applies_to_condition
+	- Enemies
+	- Nobody
+	- Party Members
+	- Party Members and Allies
+- DC
+]]
+
 -- Maps to Sensible_Ambushing\Public\Sensible_Ambushing\DifficultyClasses\DifficultyClasses.lsx
 Extra_Surprise = {}
 Extra_Surprise.difficultyClassUUIDs = {
-	[1] = "7f084717-d919-4d2c-9947-d6b3925c7f92",
-	[2] = "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
-	[3] = "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
-	[4] = "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f",
-	[5] = "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a",
-	[6] = "e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b",
-	[7] = "f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c",
-	[8] = "a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d",
-	[9] = "b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e",
-	[10] = "c9d0e1f2-a3b4-5c6d-7e8f-9a0b1c2d3e4f",
-	[11] = "d0e1f2a3-b4c5-6d7e-8f9a-0b1c2d3e4f5a",
-	[12] = "e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b",
-	[13] = "f2a3b4c5-d6e7-8f9a-0b1c-2d3e4f5a6b7c",
-	[14] = "a3b4c5d6-e7f8-9a0b-1c2d-3e4f5a6b7c8d",
-	[15] = "b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e",
-	[16] = "c5d6e7f8-a9b0-1c2d-3e4f-5a6b7c8d9e0f",
-	[17] = "d6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a",
-	[18] = "e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b",
-	[19] = "f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c",
-	[20] = "a9b0c1d2-e3f4-5a6b-7c8d-9e0f1a2b3c4d",
-	[21] = "b0c1d2e3-f4a5-6b7c-8d9e-0f1a2b3c4d5e",
-	[22] = "c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f",
-	[23] = "d2e3f4a5-b6c7-8d9e-0f1a-2b3c4d5e6f7g",
-	[24] = "e3f4a5b6-c7d8-9e0f-1a2b-3c4d5e6f7g8h",
-	[25] = "f4a5b6c7-d8e9-0f1a-2b3c-4d5e6f7g8h9i",
-	[26] = "a5b6c7d8-e9f0-1a2b-3c4d-5e6f7g8h9i0j",
-	[27] = "b6c7d8e9-f0a1-2b3c-4d5e-6f7g8h9i0j1k",
-	[28] = "c7d8e9f0-a1b2-3c4d-5e6f-7g8h9i0j1k2l",
-	[29] = "d8e9f0a1-b2c3-4d5e-6f7g-8h9i0j1k2l3m",
-	[30] = "e9f0a1b2-c3d4-5e6f-7g8h-9i0j1k2l3m4n"
+	[1] = "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
+	[2] = "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
+	[3] = "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f",
+	[4] = "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a",
+	[5] = "e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b",
+	[6] = "f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c",
+	[7] = "a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d",
+	[8] = "b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e",
+	[9] = "c9d0e1f2-a3b4-5c6d-7e8f-9a0b1c2d3e4f",
+	[10] = "d0e1f2a3-b4c5-6d7e-8f9a-0b1c2d3e4f5a",
+	[11] = "e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b",
+	[12] = "f2a3b4c5-d6e7-8f9a-0b1c-2d3e4f5a6b7c",
+	[13] = "a3b4c5d6-e7f8-9a0b-1c2d-3e4f5a6b7c8d",
+	[14] = "b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e",
+	[15] = "c5d6e7f8-a9b0-1c2d-3e4f-5a6b7c8d9e0f",
+	[16] = "d6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a",
+	[17] = "e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b",
+	[18] = "f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c",
+	[19] = "a9b0c1d2-e3f4-5a6b-7c8d-9e0f1a2b3c4d",
+	[20] = "b0c1d2e3-f4a5-6b7c-8d9e-0f1a2b3c4d5e",
+	[21] = "c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f",
+	[22] = "00c337b5-b90e-44d4-aac6-1c0ea95e2b08",
+	[23] = "b73d47fb-f929-403d-822c-d0329ef37153",
+	[24] = "02f742de-b91b-431c-b77f-d1b6b0b07e20",
+	[25] = "b620873e-d452-4104-8f44-f7f787f7d574",
+	[26] = "e4bf19c6-6a5b-4c1f-a495-910d5cbf15df",
+	[27] = "0533bdb9-5468-4ac7-8298-02cb74a8f3e5",
+	[28] = "0d90c43a-e98c-4e29-9fad-53d1dd6609b8",
+	[29] = "03eab834-e570-4b3f-ad70-00d055fb97dc",
+	[30] = "32dfc49c-5331-48f3-ae05-f731b523b723"
 }
 
 -- Weapon attacks are spells too - i.e. https://bg3.norbyte.dev/search?q=type%3Aspell+Ranged+%26+Attack#result-eda1854279be71702cf949e192e8b08a2839b809
@@ -75,9 +85,9 @@ EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedChara
 		then
 			Logger:BasicDebug("Character %s did not meet selected MCM criteria %s, so removing the Surprise status", surprisedCharacter, applies_to)
 			Osi.RemoveStatus(surprisedCharacter, "SURPRISED")
-		elseif MCM.Get("SA_resist_surprise_ability_skill") ~= Ext.Loca.GetTranslatedString("h4a5bd083bf284046bbf40c1c0a4844878c79") -- None
+		elseif MCM.Get("SA_resist_surprise_ability") ~= Ext.Loca.GetTranslatedString("h4a5bd083bf284046bbf40c1c0a4844878c79") -- None
 		then
-			local ability_skill = MCM.Get("SA_resist_surprise_ability_skill")
+			local ability_skill = MCM.Get("SA_resist_surprise_ability")
 			local dc = MCM.Get("SA_resist_surprise_dc")
 
 			Logger:BasicDebug("Character %s did meet selected MCM criteria %s, so rolling to resist surprise with Ability/Skill [%s] and DC [%d]",

@@ -64,16 +64,15 @@
     <!-- END EXTRAS MCM -->
     <content contentuid="h1ed462f7da3f4afa81806ef2633f5551c86c" version="1">Surprise</content>
     <content contentuid="h89410b5953234ebe9c7b99f44ca5b9db5834" version="1">Configure behavior around the Surprise Mechanic</content>
-    <content contentuid="heb246fdfdf1744a08fa9ce95fba5c09e03e6" version="1">Enable Surprise Ambush's Conditions For Triggering Surprise</content>
-    <content contentuid="h8182f9ab420e4348b0b6d96e440df7cb26cd" version="1">Sensible Ambush will trigger Surprise against a group if they're attacked from stealth - this includes any attack, including those not supported by the game, like grenades. Disable this if you just want vanilla behavior</content>
+    <content contentuid="heb246fdfdf1744a08fa9ce95fba5c09e03e6" version="1">Enable Sensible Ambush's Conditions For Triggering Surprise</content>
+    <content contentuid="h8182f9ab420e4348b0b6d96e440df7cb26cd" version="1">Sensible Ambush will trigger Surprise against a group if they're attacked from stealth - this includes any attack, including those not supported by the game, like grenades (NOTE: This currently only applies when you click directly on an enemy - I haven't figured out zone logic yet). Disable this if you just want vanilla behavior - below options will still apply either way</content>
     <content contentuid="h6783daa44ee54aa0a9e90585b44fe6d9022g" version="1">Who Can Be Surprised?</content>
     <content contentuid="h48bd847b96c746f195f28e2d3ff1b704c5c3" version="1">If a group is excluded (i.e. you only select Enemies, so Party Members and Allies are excluded), they will have the Surprise condition automatically removed when applied (We can't prevent the base game from applying it in the first place, we can only remove it for free)</content>
     <content contentuid="h7eb270a054fe440080ce8a1f664135da3ade" version="1">Nobody</content>
-    <content contentuid="h732291d09eeb48dca8396a91a8686f3434c3" version="1">What Skill/Ability Is Used To Resist Surprise?</content>
-    <content contentuid="hbb8d63bb7e1c44b0ab1811a2efa89c907149" version="1">The Skill or Ability to use to make the Saving Throw - if 'None' is selected, the Surprise Status will always apply (to the characters within the group selected above, unless said character uses some other mechanism to be immune to surprise).</content>
+    <content contentuid="h732291d09eeb48dca8396a91a8686f3434c3" version="1">What Ability Is Used To Resist Surprise?</content>
+    <content contentuid="hbb8d63bb7e1c44b0ab1811a2efa89c907149" version="1">Dictates the type of Saving Throw - if 'None' is selected, the Surprise Status will follow vanilla rules</content>
     <content contentuid="h085741bbbd76439f9e0e9acf63b62b59acd3" version="1">Wisdom</content>
     <content contentuid="h5fdeb31bb2c14c448f57c866b2f25e5471g6" version="1">Constitution</content>
     <content contentuid="h30e27f6c43ac4a83902d15191975725ceed8" version="1">Intelligence</content>
-    <content contentuid="h72ac7c025891449294f3e3137fa000764972" version="1">Perception</content>
     <content contentuid="h4a5bd083bf284046bbf40c1c0a4844878c79" version="1">None</content>
 </contentList>
