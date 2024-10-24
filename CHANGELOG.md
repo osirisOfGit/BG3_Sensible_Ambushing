@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Triggering surprise on any targeted action when done from stealth
   - Saving throw on status
   
-
 # [0.2.2]
 
 ## Fixed
