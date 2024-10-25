@@ -17,6 +17,7 @@ function AmbushDirector:RegisterModule(modUUID, moduleName, moduleFunc)
 	Logger:BasicInfo("Mod %s successfully added ambush module %s", modName, moduleName)
 end
 
+Ext.Require("Modules/_StealthAttacks.lua")
 Ext.Require("Modules/_Stealth.lua")
 
 local function IsCharacterEligibleToJoinAmbush(combatGuid, character)
