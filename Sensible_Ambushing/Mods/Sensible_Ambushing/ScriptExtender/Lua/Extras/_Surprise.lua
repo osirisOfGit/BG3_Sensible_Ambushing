@@ -33,6 +33,15 @@ Extra_Surprise.difficultyClassUUIDs = {
 	[30] = "32dfc49c-5331-48f3-ae05-f731b523b723"
 }
 
+--[[
+So, Vanilla Surprise is janky and applies at the beginning of combat, before any of our listeners execute. There's no way to know
+if the game has decided the group should be Surprised, so the theory behind this approach is:
+1. Track whenever a character acts from stealth
+2. If they enter combat within 3 seconds (due to differing spell animation lengths) then they acted against an enemy, and that enemy should be surprised
+3. If the above is true, we set the enemy to surprised if they aren't already
+4. If false, then we clear the tracker - we also clear it if they do any other action before the tracker expires
+]]
+
 -- Applied to characters that are adversly affected by a sneaking character
 Ext.Vars.RegisterUserVariable("Sensible_Ambushing_Acted_From_Stealth", {
 	Server = true
@@ -64,20 +73,6 @@ Ext.Osiris.RegisterListener("CastSpell", 5, "after", function(caster, spell, spe
 		end
 	end
 end)
-
--- Ext.Osiris.RegisterListener("UsingSpellAtPosition", 8, "after", function(attacker, x, y, z, spell, spellType, _, storyActionID)
--- 	Logger:BasicTrace(
--- 		"Processing UsingSpellAtPosition event: \n\t|attacker| = %s\n\t|x/y/z| = %s/%s/%s\n\t|spell| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
--- 		attacker,
--- 		x,
--- 		y,
--- 		z,
--- 		spell,
--- 		spellType,
--- 		storyActionID)
-
--- 	MarkAsActed(attacker)
--- end)
 
 EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 	if MCM.Get("SA_surprise_enabled") then
