@@ -107,10 +107,6 @@ EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedChara
 	if status == "SURPRISED"
 		and MCM.Get("SA_surprise_enabled")
 	then
-		local def_entity = Ext.Entity.Get(surprisedCharacter)
-		-- Blanket reset in case some action was performed against the defender before combat was initiated
-		def_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
-
 		local applies_to = MCM.Get("SA_surprise_applies_to_condition")
 		-- Nobody
 		if applies_to == Ext.Loca.GetTranslatedString("h7eb270a054fe440080ce8a1f664135da3ade")
