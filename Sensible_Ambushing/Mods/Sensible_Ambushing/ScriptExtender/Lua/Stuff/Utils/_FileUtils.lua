@@ -21,7 +21,7 @@ end
 ---@tparam string filepath required
 ---@treturn string
 function FileUtils:BuildAbsoluteFileTargetPath(filepath)
-	return ModUtils:GetAIMModInfo().Directory .. "/" .. filepath
+	return ModUtils:GetModInfo().Directory .. "/" .. filepath
 end
 
 --- Convenience for saving a Lua Table to a file under the AIM mod directory, logging and swallowing any errors encountered
