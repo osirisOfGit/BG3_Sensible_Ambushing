@@ -1,6 +1,3 @@
--- If within range of minor illusion, crit threshold goes down?
-
-Extra_Surprise = {}
 -- Maps to Sensible_Ambushing\Public\Sensible_Ambushing\DifficultyClasses\DifficultyClasses.lsx
 Extra_Surprise.difficultyClassUUIDs = {
 	[1] = "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
@@ -35,32 +32,80 @@ Extra_Surprise.difficultyClassUUIDs = {
 	[30] = "32dfc49c-5331-48f3-ae05-f731b523b723"
 }
 
+--[[
+So, Vanilla Surprise is janky and applies at the beginning of combat, before any of our listeners execute. There's no way to know
+if the game has decided the group should be Surprised, so the theory behind this approach is:
+1. Track whenever a character acts from stealth
+2. If they enter combat within 3 seconds (due to differing spell animation lengths) then they acted against an enemy, and that enemy should be surprised
+3. If the above is true, we set the enemy to surprised if they aren't already
+4. If false, then we clear the tracker - we also clear it if they do any other action before the tracker expires
+]]
+
+-- Applied to characters that are adversly affected by a sneaking character
+Ext.Vars.RegisterUserVariable("Sensible_Ambushing_Acted_From_Stealth", {
+	Server = true
+})
+
 -- Weapon attacks are spells too - i.e. https://bg3.norbyte.dev/search?q=type%3Aspell+Ranged+%26+Attack#result-eda1854279be71702cf949e192e8b08a2839b809
 -- AttackedBy event triggers after Sneaking is removed, so we can't use that
-Ext.Osiris.RegisterListener("UsingSpellOnTarget", 6, "before", function(attacker, defender, spell, spellType, _, storyActionID)
-	if MCM.Get("SA_enabled")
-		and MCM.Get("SA_surprise_enabled")
-		and attacker ~= defender
-		and Osi.IsInCombat(defender) == 0
-		and Osi.IsInCombat(attacker) == 0
+Ext.Osiris.RegisterListener("CastSpell", 5, "after", function(caster, spell, spellType, _, storyActionID)
+	if MCM.Get("SA_enabled") and MCM.Get("SA_surprise_enabled")
 	then
-		Logger:BasicTrace("Processing UsingSpellOnTarget event: \n\t|defender| = %s\n\t|attacker| = %s\n\t|spell| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
-			defender,
-			attacker,
+		Logger:BasicTrace("Processing CastSpell event: \n\t|caster| = %s\n\t|spell| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
+			caster,
 			spell,
 			spellType,
 			storyActionID)
+		local attacker_entity = Ext.Entity.Get(caster)
+		-- Blanket reset in case they're somehow chaining actions
+		attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
 
-		if Osi.IsPartyMember(defender, 1) == 0 or Osi.IsPartyMember(attacker, 1) == 0 then
-			if Osi.HasActiveStatus(attacker, "SNEAKING") == 1 then
-				Osi.ApplyStatus(defender, "SURPRISED", 1)
+		if Osi.HasActiveStatus(caster, "SNEAKING") == 1 then
+			attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = true
+
+			Ext.Timer.WaitFor(3000, function()
+				if attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth then
+					Logger:BasicDebug("%s acted from stealth, but the tracker wasn't processed, so removing tracker", caster)
+					attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
+				end
+			end)
+		end
+	end
+end)
+
+EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
+	if MCM.Get("SA_surprise_enabled") then
+		for _, ambushingCombatMember in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+			ambushingCombatMember = ambushingCombatMember[1]
+			local entity = Ext.Entity.Get(ambushingCombatMember)
+
+			if entity.Vars.Sensible_Ambushing_Acted_From_Stealth then
+				entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
+				Logger:BasicDebug("%s acted from stealth and should surprise their enemies, so doing that", ambushingCombatMember)
+
+				for _, potentialEnemy in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+					potentialEnemy = potentialEnemy[1]
+
+					if Osi.IsEnemy(ambushingCombatMember, potentialEnemy) == 1
+						and Osi.HasActiveStatus(potentialEnemy, "SURPRISED") == 0
+					then
+						Logger:BasicTrace("%s is an enemy of %s and isn't already surprised, so setting them as surprised",
+							potentialEnemy,
+							ambushingCombatMember)
+
+						Osi.ApplyStatus(potentialEnemy, "SURPRISED", 1)
+					end
+				end
+				return
 			end
 		end
 	end
 end)
 
 EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedCharacter, status, causee, _)
-	if status == "SURPRISED" then
+	if status == "SURPRISED"
+		and MCM.Get("SA_surprise_enabled")
+	then
 		local applies_to = MCM.Get("SA_surprise_applies_to_condition")
 		-- Nobody
 		if applies_to == Ext.Loca.GetTranslatedString("h7eb270a054fe440080ce8a1f664135da3ade")
@@ -98,14 +143,15 @@ EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedChara
 end)
 
 EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, roller, rollSubject, resultType, _, criticality)
-	if eventName == "Sensible_Ambush_Resist_Surprise_Roll_" .. ModuleUUID and Osi.HasActiveStatus(roller, "SURPRISED") == 1 then
+	if eventName == "Sensible_Ambush_Resist_Surprise_Roll_" .. ModuleUUID then
 		Logger:BasicTrace("Processing Ambush Resist Surprise check for %s against %s with result %s and criticality %s",
 			roller,
 			rollSubject,
 			resultType,
 			criticality)
 
-		if resultType == 1 then
+		if resultType == 1 and Osi.HasActiveStatus(roller, "SURPRISED") == 1 then
+			Logger:BasicDebug("Character %s passed their resist roll and has SURPRISED - removing the status", roller)
 			Osi.RemoveStatus(roller, "SURPRISED")
 		end
 	end

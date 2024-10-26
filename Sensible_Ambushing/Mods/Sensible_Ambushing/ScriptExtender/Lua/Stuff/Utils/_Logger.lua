@@ -27,6 +27,17 @@ local TEXT_COLORS = {
     white = 37,
 }
 
+local function GetTimestamp()
+    local time = Ext.Utils.MonotonicTime()
+    local milliseconds = time % 1000
+    local seconds = math.floor(time / 1000) % 60
+    local minutes = math.floor((time / 1000) / 60) % 60
+    local hours = math.floor(((time / 1000) / 60) / 60) % 24
+    return string.format("[%02d:%02d:%02d.%03d]",
+        hours, minutes, seconds, milliseconds)
+end
+
+
 local function ConcatPrefix(prefix, message)
     local paddedPrefix = prefix .. string.rep(" ", 25 - #prefix) .. " : "
 
@@ -75,7 +86,7 @@ function Logger:BasicPrint(content, messageType, textColor, customPrefix, rainbo
         messageType = messageType or Logger.PrintTypes.INFO
         local textColorCode = textColor or TEXT_COLORS.cyan -- Default to cyan
 
-        customPrefix = customPrefix or ModUtils:GetAIMModInfo().Name
+        customPrefix = customPrefix or ModUtils:GetModInfo().Name
         local padding = string.rep(" ", prefixLength - #customPrefix)
         local message = ConcatOutput(ConcatPrefix(customPrefix .. padding .. "  [" .. Logger.PrintTypes[messageType] .. "]", content))
 
@@ -128,7 +139,7 @@ local logPath = 'log.txt'
 --- Saves the log to the log.txt
 function Logger:LogMessage(message)
     local fileContent = FileUtils:LoadFile(logPath) or ""
-    local logMessage = Ext.Utils.MonotonicTime() .. " " .. message
+    local logMessage = GetTimestamp() .. " " .. message
     Ext.IO.SaveFile(FileUtils:BuildAbsoluteFileTargetPath(logPath), fileContent .. logMessage .. "\n")
 end
 

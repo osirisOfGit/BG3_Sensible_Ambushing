@@ -9,7 +9,7 @@
 - [ ] Prevent attacking from sneak before combat from removing sneak status
   - [ ] "Ghost" of ambusher changes position depending on their obscuredState and stealth save?
 - [ ] Force surprise on enemies when attacking them
-  - [ ] Apply for area-of-effect spells and things like Minor Illusion as well - need to figure out how to find the radius of a spell
+  - [x] Apply for area-of-effect spells and things like Minor Illusion as well - need to figure out how to find the radius of a spell
   - [ ] Before combat starts (exclusive MCM options):
     - [x] When stealthed
     - [ ] When not stealthed and not in sight of enemy?

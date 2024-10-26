@@ -1,6 +1,6 @@
 ModUtils = {}
 
-function ModUtils:GetAIMModInfo()
+function ModUtils:GetModInfo()
 	return Ext.Mod.GetMod(ModuleUUID).Info
 end
 
