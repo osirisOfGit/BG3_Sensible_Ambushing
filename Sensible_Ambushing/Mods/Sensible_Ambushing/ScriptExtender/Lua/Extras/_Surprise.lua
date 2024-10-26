@@ -34,116 +34,87 @@ Extra_Surprise.difficultyClassUUIDs = {
 }
 
 -- Applied to characters that are adversly affected by a sneaking character
-Ext.Vars.RegisterUserVariable("Sensible_Ambushing_Should_Be_Surprised", {
+Ext.Vars.RegisterUserVariable("Sensible_Ambushing_Acted_From_Stealth", {
 	Server = true
 })
 
 -- Weapon attacks are spells too - i.e. https://bg3.norbyte.dev/search?q=type%3Aspell+Ranged+%26+Attack#result-eda1854279be71702cf949e192e8b08a2839b809
 -- AttackedBy event triggers after Sneaking is removed, so we can't use that
-Ext.Osiris.RegisterListener("UsingSpellOnTarget", 6, "after", function(attacker, defender, spell, spellType, _, storyActionID)
-	if MCM.Get("SA_enabled")
-		and MCM.Get("SA_surprise_enabled")
-		and attacker ~= defender
-		and Osi.IsInCombat(defender) == 0
-		and Osi.IsInCombat(attacker) == 0
+Ext.Osiris.RegisterListener("CastSpell", 5, "after", function(caster, spell, spellType, _, storyActionID)
+	if MCM.Get("SA_enabled") and MCM.Get("SA_surprise_enabled")
 	then
-		local def_entity = Ext.Entity.Get(defender)
-		-- Blanket reset in case some action was performed against the defender before combat was initiated
-		def_entity.Vars.Sensible_Ambushing_Should_Be_Surprised = nil
-
-		Logger:BasicTrace("Processing UsingSpellOnTarget event: \n\t|defender| = %s\n\t|attacker| = %s\n\t|spell| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
-			defender,
-			attacker,
+		Logger:BasicTrace("Processing CastSpell event: \n\t|caster| = %s\n\t|spell| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
+			caster,
 			spell,
 			spellType,
 			storyActionID)
+		local attacker_entity = Ext.Entity.Get(caster)
+		-- Blanket reset in case they're somehow chaining actions
+		attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
 
-		if Osi.IsPartyMember(defender, 1) == 0 or Osi.IsPartyMember(attacker, 1) == 0 then
-			if Osi.HasActiveStatus(attacker, "SNEAKING") == 1 then
-				def_entity.Vars.Sensible_Ambushing_Should_Be_Surprised = true
+		if Osi.HasActiveStatus(caster, "SNEAKING") == 1 then
+			attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = true
 
-				Ext.Timer.WaitFor(2000, function()
-					if def_entity.Vars.Sensible_Ambushing_Should_Be_Surprised then
-						Logger:BasicDebug("Character %s was affected from stealth, but didn't enter combat, so removing tracker", defender)
-						def_entity.Vars.Sensible_Ambushing_Should_Be_Surprised = nil
-					end
-				end)
-			end
+			Ext.Timer.WaitFor(3000, function()
+				if attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth then
+					Logger:BasicDebug("%s acted from stealth, but the tracker wasn't processed, so removing tracker", caster)
+					attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
+				end
+			end)
 		end
 	end
 end)
 
 -- Ext.Osiris.RegisterListener("UsingSpellAtPosition", 8, "after", function(attacker, x, y, z, spell, spellType, _, storyActionID)
--- 	local spellStats = Ext.Stats.Get(spell)
-
 -- 	Logger:BasicTrace(
--- 		"Processing UsingSpellAtPosition event: \n\t|attacker| = %s\n\t|x/y/z| = %s/%s/%s\n\t|spell| = %s\n\t|targetRadius| = %s\n\t|areaRadius| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
+-- 		"Processing UsingSpellAtPosition event: \n\t|attacker| = %s\n\t|x/y/z| = %s/%s/%s\n\t|spell| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
 -- 		attacker,
 -- 		x,
 -- 		y,
 -- 		z,
 -- 		spell,
--- 		spellStats.TargetRadius,
--- 		spellStats.AreaRadius,
 -- 		spellType,
 -- 		storyActionID)
 
--- 		Osi.IterateCharactersAround(attacker, spellStats.AreaRadius + spellStats.TargetRadius, "Sensible_Ambushing_Find_Affected_Characters_"..ModuleUUID, "Sensible_Ambushing_Complete_Find_Affected_Characters_"..ModuleUUID)
+-- 	MarkAsActed(attacker)
 -- end)
 
-Ext.Osiris.RegisterListener("CombatRoundStarted", 2, "after", function(combatGuid, round)
-	if round == 1
-		and MCM.Get("SA_enabled")
-		and MCM.Get("SA_surprise_enabled")
-	then
-		local combatGroupsProcessed = {}
-		for _, surprisedCombatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
-			surprisedCombatParticipant = surprisedCombatParticipant[1]
-			local entity = Ext.Entity.Get(surprisedCombatParticipant)
-			local combatGroup = entity.CombatParticipant.CombatGroupId
+EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
+	if MCM.Get("SA_surprise_enabled") then
+		for _, ambushingCombatMember in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+			ambushingCombatMember = ambushingCombatMember[1]
+			local entity = Ext.Entity.Get(ambushingCombatMember)
 
-			if combatGroupsProcessed[combatGroup] then
-				goto continue
-			end
+			if entity.Vars.Sensible_Ambushing_Acted_From_Stealth then
+				entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
+				Logger:BasicDebug("%s acted from stealth and should surprise their enemies, so doing that", ambushingCombatMember)
 
-			if entity.Vars.Sensible_Ambushing_Should_Be_Surprised then
-				if combatGroup ~= "" then
-					combatGroupsProcessed[combatGroup] = true
-				end
+				for _, potentialEnemy in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+					potentialEnemy = potentialEnemy[1]
 
-				Logger:BasicDebug("%s was affected from stealth and entered combat, so surprising their combatGroup!", surprisedCombatParticipant)
-				for _, groupMember in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
-					groupMember = groupMember[1]
-
-					local groupMemberEntity = Ext.Entity.Get(groupMember)
-
-					if groupMemberEntity.CombatParticipant.CombatGroupId == combatGroup
-						and Osi.IsAlly(surprisedCombatParticipant, groupMember) == 1
-						and Osi.HasActiveStatus(groupMember, "SURPRISED") == 0
+					if Osi.IsEnemy(ambushingCombatMember, potentialEnemy) == 1
+						and Osi.HasActiveStatus(potentialEnemy, "SURPRISED") == 0
 					then
-						Logger:BasicTrace("%s is in the same combatGroup (%s) as %s, who was surprised, so surprising them too.",
-							groupMember,
-							combatGroup,
-							surprisedCombatParticipant)
+						Logger:BasicTrace("%s is an enemy of %s and isn't already surprised, so setting them as surprised",
+							potentialEnemy,
+							ambushingCombatMember)
 
-						groupMemberEntity.Vars.Sensible_Ambushing_Should_Be_Surprised = nil
-						Osi.ApplyStatus(groupMember, "SURPRISED", 1)
+						Osi.ApplyStatus(potentialEnemy, "SURPRISED", 1)
 					end
 				end
+				return
 			end
-			::continue::
 		end
 	end
 end)
 
 EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedCharacter, status, causee, _)
 	if status == "SURPRISED"
-		and MCM.Get("SA_enabled")
 		and MCM.Get("SA_surprise_enabled")
 	then
 		local def_entity = Ext.Entity.Get(surprisedCharacter)
 		-- Blanket reset in case some action was performed against the defender before combat was initiated
-		def_entity.Vars.Sensible_Ambushing_Should_Be_Surprised = nil
+		def_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
 
 		local applies_to = MCM.Get("SA_surprise_applies_to_condition")
 		-- Nobody
