@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [0.4.0]
+
+## Changed
+
+- Surprise Mechanics
+  - Works for all actions now
+
+- Logging timestamps - this is not really accurate to system time, should be used more for relative timing between logs
+- Clearing log on SE load
+
 # [0.3.0]
 
 ## Added
@@ -13,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Triggering surprise on any targeted action when done from stealth
   - Saving throw on status
   
-
 # [0.2.2]
 
 ## Fixed

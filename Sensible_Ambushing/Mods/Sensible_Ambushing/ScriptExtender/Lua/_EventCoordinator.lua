@@ -2,7 +2,8 @@ EventCoordinator = {}
 
 local events = {
 	["RollResult"] = {},
-	["StatusApplied"] = {}
+	["StatusApplied"] = {},
+	["CombatStarted"] = {},
 }
 
 --- API method to register functions that operate under the same event, for performance reasons
@@ -24,6 +25,14 @@ Ext.Osiris.RegisterListener("StatusApplied", 4, "after", function(object, status
 	if MCM.Get("SA_enabled") then
 		for _, func in pairs(events["StatusApplied"]) do
 			func(object, status, causee, storyActionID)
+		end
+	end
+end)
+
+Ext.Osiris.RegisterListener("CombatStarted", 1, "before", function(combatGuid)
+	if MCM.Get("SA_enabled") then
+		for _, func in pairs(events["CombatStarted"]) do
+			func(combatGuid)
 		end
 	end
 end)
