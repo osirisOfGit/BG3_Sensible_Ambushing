@@ -47,7 +47,10 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 						for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
 							combatParticipant = combatParticipant[1]
 
-							if Osi.IsEnemy(character_to_apply, combatParticipant) == 1 then
+							if Osi.IsEnemy(character_to_apply, combatParticipant) == 1
+								and Osi.CanSpotSneakers(combatParticipant) == 1
+								and Osi.HasLineOfSight(combatParticipant, character_to_apply) == 1
+							then
 								Osi.RequestPassiveRollVersusSkill(character_to_apply,
 									combatParticipant,
 									"SkillCheckRoll",
@@ -67,33 +70,35 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 	return pre_ambush_functions, post_ambush_functions
 end)
 
-EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, roller, rollSubject, resultType, _, criticality)
+EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, sneakingChar, enemy, resultType, _, criticality)
 	if eventName == "Sensible_Ambush_Stealth_Check_" .. ModuleUUID then
 		Logger:BasicTrace("Processing Ambush Stealth check for %s against %s with result %s and criticality %s",
-			roller,
-			rollSubject,
+			sneakingChar,
+			enemy,
 			resultType,
 			criticality)
 
 		if MCM.Get("SA_sneaking_chars_can_trip") and criticality == 2 then -- Critical Fail
-			Logger:BasicDebug("%s critically failed their stealth check!", roller)
+			Logger:BasicDebug("%s critically failed their stealth check!", sneakingChar)
 
-			Osi.ApplyStatus(roller, "PRONE", 1)
+			Osi.ApplyStatus(sneakingChar, "PRONE", 1)
 
-			stealth_tracker[roller] = nil
+			stealth_tracker[sneakingChar] = nil
 			return
 		end
 
 		for char, originalGhost in pairs(stealth_tracker) do
-			if char == roller then
+			if char == sneakingChar then
 				if resultType == 0 then
-					Logger:BasicDebug("%s failed their stealth check, so the enemy knows they're being ambushed", roller)
+					Logger:BasicDebug("%s failed their stealth check, so the enemy knows they're being ambushed", sneakingChar)
 
-					local ent = Ext.Entity.Get(roller)
+					local ent = Ext.Entity.Get(sneakingChar)
 					ent.Stealth.Position = originalGhost
 					ent:Replicate("Stealth")
 
 					stealth_tracker[char] = nil
+
+					Osi.SteerTo(enemy, sneakingChar, 0)
 				end
 				return
 			end
