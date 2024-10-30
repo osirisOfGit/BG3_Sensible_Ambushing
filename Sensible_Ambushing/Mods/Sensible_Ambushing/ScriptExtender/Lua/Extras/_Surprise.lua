@@ -55,7 +55,7 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, _, _, _, _
 		-- Blanket reset in case they're somehow chaining actions
 		attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise = nil
 
-		if Osi.HasActiveStatus(caster, "SNEAKING") == 1 then
+		if Osi.HasActiveStatus(caster, "SNEAKING") == 1 and Osi.IsInCombat(caster) == 0 then
 			attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise = true
 
 			Ext.Timer.WaitFor(3000, function()
@@ -88,7 +88,7 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 							potentialEnemy,
 							ambushingCombatMember)
 
-						Osi.ApplyStatus(potentialEnemy, "SURPRISED", 1)
+						Osi.ApplyStatus(potentialEnemy, "SURPRISED", 1, 0)
 					end
 				end
 				return
@@ -98,7 +98,7 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 end)
 
 EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedCharacter, status, causee, _)
-	if status == "SURPRISED" and MCM.Get("SA_surprise_enabled") then
+	if status == "SURPRISED" then
 		local applies_to = MCM.Get("SA_surprise_applies_to_condition")
 		-- Nobody
 		if applies_to == Ext.Loca.GetTranslatedString("h7eb270a054fe440080ce8a1f664135da3ade")
