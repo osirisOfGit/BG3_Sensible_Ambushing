@@ -83,4 +83,18 @@
     <content contentuid="h1c9e3fae536448fea9c4d16854bf0ce3079f" version="1">When casting a spell without a specific STEALTH flag, the game engine automatically removes the sneak status - to get around that, this mod automatically reapplys the SNEAKING condition. To ensure combat begins appropriately when casting spells that can affect enemies, this setting delays the reapplication of SNEAK until combat either begins or the specific length of time passes to prevent the attacked character seeking you out in real time. Due to varied spell animation lengths, there is no single 'perfect' number for this.</content>
     <content contentuid="h3995ece79eff4c58ae694df5f0afca556f26" version="1">Enable Out Of Combat Behavior</content>
     <content contentuid="hef5781ca3efb4fa2a98e7d21769ac54721c9" version="1">Disable this if you just want vanilla behavior to occur when out of combat (always removing SNEAK unless you cast a spell with a STEALTH flag)</content>
+    <content contentuid="hefcef06877c9403b9289e83619c571b2ff9g" version="1">In Combat</content>
+    <content contentuid="hf82cd86d337c4256b5fbc9c1c5988dfc57f7" version="1">When performing a non-stealth action while in Combat and Sneaking, you roll a Stealth check against each enemy that can spot you and has Line-Of-Sight. If you pass these checks, your 'ghost' (which represents where enemies think you are) gets randomly placed within a defined horizontal (not vertical) distance of you. 
+        This distance shrinks on each subsequent action, and grows based on your Obscurity Level and Stealth Proficiency/Expertise</content>
+    <content contentuid="h255457fd0541434ea2c0c6b87e0d22e97ef8" version="1">Enable In-Combat Behavior</content>
+    <content contentuid="hf5354a8fe3874e0d97114c595b267e937a28" version="1">Disable this if you just want vanilla behavior to occur when in combat (always removing SNEAK unless you cast a spell with a STEALTH flag)</content>
+    <content contentuid="h26f8791b66c04affa315083c5d53cbcf7ab5" version="1">Maximum Base Radius For Randomized Ghost Position On Action</content>
+    <content contentuid="hd2d9b64f7b4d443cabf02bb024fd38e615c9" version="1">The maximum distance your Ghost can be placed from you without considering number of actions performed, Obscurity level, stealth Proficiency/Expertise, etc</content>
+    <content contentuid="hb8cfc08da681411e9b2e1e6b64aa982aa37f" version="1">Obscurity Level Multiplier</content>
+    <content contentuid="h5238157947e14197b2dd9a51426a60838aa9" version="1">Calculation is (randomized ghost distance + (obscurity level * this multiplier)), with lightly obscured = 1 and heavily obscured = 2. Ash surface generated when changing this value will show (max radius + (obscurity level * this multiplier)) to show potential max. 
+        Takes enemy Darkvision (reducing obscurity level by one) and Blindsight (negating entirely) into account.</content>
+    <content contentuid="h81a3b114db414d299c0fc05efab050070162" version="1">Action Counter Multiplier</content>
+    <content contentuid="h013d3d684c0c477eac57c7223ed27e50d9d8" version="1">Calculation is (randomized ghost distance with obscurity / (number of consecutive actions while sneaking / this multiplier)), ensuring that the enemy is better able to figure out where you are after each action (if the action does not have the STEALTH flag). (number of consecutive actions while sneaking / this multiplier) will round up to 1 if less than 1. 
+        Generated Ash Surface will display (max radius / (2 / this multipler)), emulating 2 consecutive actions.
+        Count resets if sneak is removed for any reason other than using a non-self-targeting spell/attack, like using the Hide skill or being seen by an NPC.</content>
 </contentList>

@@ -87,7 +87,11 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, 
 				stealth_tracker = nil
 			end
 		else
-			RollStealthAgainstEnemies(caster)
+			if MCM.Get("SA_enable_in_combat_behavior") then
+				RollStealthAgainstEnemies(caster)
+			else
+				stealth_tracker = nil
+			end
 		end
 
 		caster_entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = stealth_tracker
@@ -95,28 +99,45 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, 
 end)
 
 EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
-	for _, ambushingCombatMember in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
-		ambushingCombatMember = ambushingCombatMember[1]
-		local entity = Ext.Entity.Get(ambushingCombatMember)
-		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker or {}
+	if MCM.Get("SA_enable_in_combat_behavior") then
+		for _, ambushingCombatMember in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+			ambushingCombatMember = ambushingCombatMember[1]
+			local entity = Ext.Entity.Get(ambushingCombatMember)
+			local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker or {}
 
-		if stealth_tracker.Counter then
-			-- Just in case there's some gap in events and it doesn't get reset
-			stealth_tracker.Counter = 1
-			Logger:BasicDebug("%s acted from stealth and should keep their stealth in combat, so doing that", ambushingCombatMember)
+			if stealth_tracker.Counter then
+				-- Just in case there's some gap in events and it doesn't get reset
+				stealth_tracker.Counter = 1
+				Logger:BasicDebug("%s acted from stealth and should keep their stealth in combat, so doing that", ambushingCombatMember)
 
-			Osi.ApplyStatus(ambushingCombatMember, "SNEAKING", -1, 0)
+				Osi.ApplyStatus(ambushingCombatMember, "SNEAKING", -1, 0)
 
-			RollStealthAgainstEnemies(ambushingCombatMember)
+				RollStealthAgainstEnemies(ambushingCombatMember)
 
-			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = stealth_tracker
-			return
+				entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = stealth_tracker
+				return
+			end
 		end
 	end
 end)
 
-local function CalculateGhostPosition(action_counter, current_coord)
-	return (Ext.Math.Random(-10, 10) / action_counter) + current_coord
+local function ConvertObscurityLevel(char)
+	if Osi.HasActiveStatus(char, "SNEAKING_LIGHTLY_OBSCURED") then
+		return 1
+	elseif Osi.HasActiveStatus(char, "SNEAKING_HEAVILY_OBSCURED") then
+		return 2
+	end
+
+	return 0
+end
+local function CalculateGhostPosition(char, action_counter)
+	local max_radius = MCM.Get("SA_max_radius_for_ghost_on_action")
+	local randomized_pos = Ext.Math.Random(max_radius * -1, max_radius)
+	local with_obscurity = ConvertObscurityLevel(char) * MCM.Get("SA_ghost_radius_obscurity_multiplier")
+	local action_counter_divisor = action_counter / MCM.Get("SA_action_counter_divisor")
+	action_counter_divisor = action_counter_divisor < 1 and 1 or action_counter_divisor
+
+	return ((randomized_pos + with_obscurity) / action_counter_divisor)
 end
 
 EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealthActor, enemy, resultType, _, criticality)
@@ -131,17 +152,17 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
 
 		if not stealth_tracker then
-			Logger:BasicDebug("%s rolled a stealth action check, but didn't have their tracker?", stealthActor)
+			Logger:BasicWarning("%s rolled a stealth action check, but didn't have their tracker? This is a bug - skipping result functionality, please report on Nexus page with your MCM configs and your scenario - https://www.nexusmods.com/baldursgate3/mods/13114?tab=bugs", stealthActor)
 			return
 		end
 
 		if resultType == 1 and entity.Stealth then
 			local x, y, z = Osi.GetPosition(stealthActor)
 			local newPosition = { Osi.FindValidPosition(
-				CalculateGhostPosition(stealth_tracker.Counter, x),
+				CalculateGhostPosition(stealthActor, stealth_tracker.Counter) + x,
 				-- don't wanna change the y axis, too many considerations and it doesn't make much sense anyway
 				y,
-				CalculateGhostPosition(stealth_tracker.Counter, z),
+				CalculateGhostPosition(stealthActor, stealth_tracker.Counter) + z,
 				3,
 				stealthActor,
 				0
@@ -171,16 +192,16 @@ Ext.Osiris.RegisterListener("StatusRemoved", 4, "after", function(char, status, 
 		local entity = Ext.Entity.Get(char)
 		local tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
 		if tracker then
-			if Osi.IsInCombat(char) == 0 and IsHostileSpell(tracker.SpellCast) then
-				if MCM.Get("SA_enable_out_of_combat_action_behavior") then
+			if Osi.IsInCombat(char) == 0 and MCM.Get("SA_enable_out_of_combat_action_behavior") then
+				if IsHostileSpell(tracker.SpellCast) then
 					Logger:BasicTrace(
 						"%s lost sneaking due to %s and still had their tracker, but they're out of combat and cast the hostile spell [%s], so letting CombatStarted handle applying SNEAKING",
 						char,
 						causee,
 						tracker.SpellCast)
 				end
-			else
-				Logger:BasicTrace("%s lost sneaking due to %s, but still had their tracker and is either in combat or [%s] is a non-hostile spell, so reapplying sneak",
+			elseif MCM.Get("SA_enable_in_combat_behavior") then
+				Logger:BasicTrace("%s lost sneaking due to %s, but still had their tracker and is in combat, so reapplying sneak",
 					char,
 					causee,
 					tracker.SpellCast)
@@ -222,5 +243,25 @@ Ext.Osiris.RegisterListener("LeftCombat", 2, "after", function(char, _)
 	if entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker then
 		Logger:BasicTrace("%s left combat and had the stealth action tracker - resetting", char)
 		entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
+	end
+end)
+
+Ext.ModEvents.BG3MCM["MCM_Setting_Saved"]:Subscribe(function(payload)
+	if not payload or payload.modUUID ~= ModuleUUID or not payload.settingId or not MCM.Get("SA_show_surface_for_radius_settings") then
+		return
+	end
+
+	local value = nil
+	if payload.settingId == "SA_max_radius_for_ghost_on_action" then
+		-- https://bg3.norbyte.dev/search?q=Surface#result-bbcd130617bfa4089f42431fb3373dca79334542
+		value = payload.value
+	elseif payload.settingId == "SA_ghost_radius_obscurity_multiplier" then
+		value = MCM.Get("SA_max_radius_for_ghost_on_action") + (ConvertObscurityLevel(Osi.GetHostCharacter()) * payload.value)
+	elseif payload.settingId == "SA_action_counter_divisor" then
+		value = MCM.Get("SA_max_radius_for_ghost_on_action") / (2 / payload.value)
+	end
+
+	if value then
+		Osi.CreateSurface(Osi.GetHostCharacter(), "SurfaceAsh", value, 1)
 	end
 end)
