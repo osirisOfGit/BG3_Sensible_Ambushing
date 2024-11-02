@@ -122,14 +122,16 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 end)
 
 local function ConvertObscurityLevel(char)
-	if Osi.HasActiveStatus(char, "SNEAKING_LIGHTLY_OBSCURED") then
+	local state = Osi.GetObscuredState(char)
+	if state == "LightlyObscured" then
 		return 1
-	elseif Osi.HasActiveStatus(char, "SNEAKING_HEAVILY_OBSCURED") then
+	elseif state == "HeavilyObscured" then
 		return 2
 	end
 
 	return 0
 end
+
 local function CalculateRandomGhostPosition(char, action_counter)
 	local max_radius = MCM.Get("SA_max_radius_for_ghost_on_action")
 	local randomized_pos = Ext.Math.Random(max_radius * -1, max_radius)
@@ -163,6 +165,8 @@ local function CalculateRandomGhostCoordinates(stealthActor, stealth_tracker)
 		newPosition[2],
 		newPosition[3]
 	)
+
+	return newPosition
 end
 
 EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealthActor, enemy, resultType, _, criticality)
@@ -288,7 +292,10 @@ Ext.ModEvents.BG3MCM["MCM_Setting_Saved"]:Subscribe(function(payload)
 	elseif payload.settingId == "SA_ghost_radius_obscurity_multiplier" then
 		value = MCM.Get("SA_max_radius_for_ghost_on_action") + (ConvertObscurityLevel(Osi.GetHostCharacter()) * payload.value)
 	elseif payload.settingId == "SA_action_counter_divisor" then
-		value = MCM.Get("SA_max_radius_for_ghost_on_action") / (2 / payload.value)
+		local div_val = 2 / payload.value
+		div_val = div_val < 1 and 1 or div_val
+
+		value = (MCM.Get("SA_max_radius_for_ghost_on_action") + (ConvertObscurityLevel(Osi.GetHostCharacter()) * MCM.Get("SA_ghost_radius_obscurity_multiplier"))) / div_val
 	end
 
 	if value then

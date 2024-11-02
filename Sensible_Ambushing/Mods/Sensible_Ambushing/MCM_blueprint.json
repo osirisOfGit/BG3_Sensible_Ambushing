@@ -372,7 +372,7 @@
 						{
 							"Id": "SA_ghost_radius_obscurity_multiplier",
 							"Name": "Obscurity Level Multiplier",
-							"Description": "Calculation is (randomized ghost distance + (obscurity level * this multiplier)), with lightly obscured = 1 and heavily obscured = 2. Ash surface generated when changing this value will show (max radius + (obscurity level * this multiplier)) to show potential max. Takes enemy Darkvision (reducing obscurity level by one) and Blindsight (negating entirely) into account.",
+							"Description": "Calculation is (randomized ghost distance + (obscurity level * this multiplier)), with lightly obscured = 1 and heavily obscured = 2. Ash surface generated when changing this value will show (max radius + (obscurity level * this multiplier)) to show potential max with current obscurity. Takes enemy Darkvision (reducing obscurity level by one) and Blindsight (negating entirely) into account.",
 							"Handles": {
 								"NameHandle": "hb8cfc08da681411e9b2e1e6b64aa982aa37f",
 								"DescriptionHandle": "h5238157947e14197b2dd9a51426a60838aa9"
@@ -392,7 +392,7 @@
 						{
 							"Id": "SA_action_counter_divisor",
 							"Name": "Action Counter Divisor",
-							"Description": "Calculation is (randomized ghost distance with obscurity / (number of consecutive actions while sneaking / this divisor)), ensuring that the enemy is better able to figure out where you are after each action (if the action does not have the STEALTH flag). (number of consecutive actions while sneaking / this divisor) will round up to 1 if less than 1. Count resets if sneak is removed intentionally or by another mechanic, like using the Hide skill or being seen by an NPC. Generated Ash Surface will display (max radius / (2 / this divisor)), emulating 2 consecutive actions",
+							"Description": "Calculation is (randomized ghost distance with obscurity / (number of consecutive actions while sneaking / this divisor)), ensuring that the enemy is better able to figure out where you are after each action (if the action does not have the STEALTH flag). (number of consecutive actions while sneaking / this divisor) will round up to 1 if less than 1. Count resets if sneak is removed intentionally or by another mechanic, like using the Hide skill or being seen by an NPC. Generated Ash Surface will display (max radius with obscurity / (2 / this divisor)), emulating 2 consecutive actions",
 							"Handles": {
 								"NameHandle": "h81a3b114db414d299c0fc05efab050070162",
 								"DescriptionHandle": "h013d3d684c0c477eac57c7223ed27e50d9d8"
