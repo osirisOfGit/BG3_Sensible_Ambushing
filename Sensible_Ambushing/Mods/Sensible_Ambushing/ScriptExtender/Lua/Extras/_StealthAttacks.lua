@@ -130,14 +130,39 @@ local function ConvertObscurityLevel(char)
 
 	return 0
 end
-local function CalculateGhostPosition(char, action_counter)
+local function CalculateRandomGhostPosition(char, action_counter)
 	local max_radius = MCM.Get("SA_max_radius_for_ghost_on_action")
 	local randomized_pos = Ext.Math.Random(max_radius * -1, max_radius)
-	local with_obscurity = ConvertObscurityLevel(char) * MCM.Get("SA_ghost_radius_obscurity_multiplier")
+	local pos_sign = Ext.Math.Sign(randomized_pos)
+	local with_obscurity = (ConvertObscurityLevel(char) * MCM.Get("SA_ghost_radius_obscurity_multiplier")) * pos_sign
 	local action_counter_divisor = action_counter / MCM.Get("SA_action_counter_divisor")
 	action_counter_divisor = action_counter_divisor < 1 and 1 or action_counter_divisor
 
 	return ((randomized_pos + with_obscurity) / action_counter_divisor)
+end
+
+local function CalculateRandomGhostCoordinates(stealthActor, stealth_tracker)
+	local x, y, z = Osi.GetPosition(stealthActor)
+	local newPosition = { Osi.FindValidPosition(
+		CalculateRandomGhostPosition(stealthActor, stealth_tracker.Counter) + x,
+		-- don't wanna change the y axis, too many considerations and it doesn't make much sense anyway
+		y,
+		CalculateRandomGhostPosition(stealthActor, stealth_tracker.Counter) + z,
+		3,
+		stealthActor,
+		0
+	) }
+
+	Logger:BasicTrace("%s, with a Stealth Action Counter of %s, had their ghost moved from \n\t[x/y/z] = %s/%s/%s\n\tto\n\t[x/y/z] = %s/%s/%s",
+		stealthActor,
+		stealth_tracker.Counter,
+		x,
+		y,
+		z,
+		newPosition[1],
+		newPosition[2],
+		newPosition[3]
+	)
 end
 
 EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealthActor, enemy, resultType, _, criticality)
@@ -152,37 +177,42 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
 
 		if not stealth_tracker then
-			Logger:BasicWarning("%s rolled a stealth action check, but didn't have their tracker? This is a bug - skipping result functionality, please report on Nexus page with your MCM configs and your scenario - https://www.nexusmods.com/baldursgate3/mods/13114?tab=bugs", stealthActor)
+			Logger:BasicWarning(
+				"%s rolled a stealth action check, but didn't have their tracker? This is a bug - skipping result functionality, please report on Nexus page with your MCM configs and your scenario - https://www.nexusmods.com/baldursgate3/mods/13114?tab=bugs",
+				stealthActor)
 			return
 		end
 
 		if resultType == 1 and entity.Stealth then
-			local x, y, z = Osi.GetPosition(stealthActor)
-			local newPosition = { Osi.FindValidPosition(
-				CalculateGhostPosition(stealthActor, stealth_tracker.Counter) + x,
-				-- don't wanna change the y axis, too many considerations and it doesn't make much sense anyway
-				y,
-				CalculateGhostPosition(stealthActor, stealth_tracker.Counter) + z,
-				3,
-				stealthActor,
-				0
-			) }
+			local newPosition = CalculateRandomGhostCoordinates(stealthActor, stealth_tracker)
 
-			Logger:BasicTrace("%s, with a Stealth Action Counter of %s, had their ghost moved from \n\t[x/y/z] = %s/%s/%s\n\tto\n\t[x/y/z] = %s/%s/%s",
-				stealthActor,
-				stealth_tracker.Counter,
-				x,
-				y,
-				z,
-				newPosition[1],
-				newPosition[2],
-				newPosition[3]
-			)
+			if not newPosition then
+				local retries = 0
+				while retries <= 3 do
+					if not newPosition then
+						retries = retries + 1
+						Logger:BasicDebug("Failed to find a valid random ghost coordinate - retry attempt %s", retries)
+						newPosition = CalculateRandomGhostCoordinates(stealthActor, stealth_tracker)
+					else
+						break
+					end
+				end
+			end
+
+			if not newPosition then
+				Logger:BasicDebug("Couldn't find a valid random ghost coordinate for %s - leaving it alone", stealthActor)
+				return
+			end
 
 			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker.LastGhostPosition = newPosition
 
 			entity.Stealth.Position = newPosition
 			entity:Replicate("Stealth")
+		else
+			Logger:BasicDebug("%s failed their Stealth Action roll - removing SNEAKING")
+			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
+			Osi.RemoveStatus(stealthActor, "SNEAKING")
+			Osi.SteerTo(enemy, stealthActor, 0)
 		end
 	end
 end)
