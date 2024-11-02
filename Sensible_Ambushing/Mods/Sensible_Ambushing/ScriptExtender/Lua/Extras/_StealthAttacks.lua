@@ -212,6 +212,11 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 
 			entity.Stealth.Position = newPosition
 			entity:Replicate("Stealth")
+
+			if Osi.GetDistanceTo(stealthActor, enemy) <= 9 then
+				Logger:BasicDebug("Steering %s to %s as they're within 9m of each other", enemy, stealthActor)
+				Osi.SteerTo(enemy, stealthActor, 0)
+			end
 		else
 			Logger:BasicDebug("%s failed their Stealth Action roll - removing SNEAKING")
 			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil

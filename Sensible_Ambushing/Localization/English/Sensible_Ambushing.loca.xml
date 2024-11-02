@@ -85,7 +85,8 @@
     <content contentuid="hef5781ca3efb4fa2a98e7d21769ac54721c9" version="1">Disable this if you just want vanilla behavior to occur when out of combat (always removing SNEAK unless you cast a spell with a STEALTH flag)</content>
     <content contentuid="hefcef06877c9403b9289e83619c571b2ff9g" version="1">In Combat</content>
     <content contentuid="hf82cd86d337c4256b5fbc9c1c5988dfc57f7" version="1">When performing a non-stealth action while in Combat and Sneaking, you roll a Stealth check against each enemy that can spot you and has Line-Of-Sight. If you pass these checks, your 'ghost' (which represents where enemies think you are) gets randomly placed within a defined horizontal (not vertical) distance of you. 
-        This distance shrinks on each subsequent action, and grows based on your Obscurity Level</content>
+        This distance shrinks on each subsequent action, and grows based on your Obscurity Level.
+        If you're within 9 meters (Distant Metamagic distance for melee spells) of any given enemy when this check is performed, they'll turn to look at your current position, forcing you to make an additional Hide check.</content>
     <content contentuid="h255457fd0541434ea2c0c6b87e0d22e97ef8" version="1">Enable In-Combat Behavior</content>
     <content contentuid="hf5354a8fe3874e0d97114c595b267e937a28" version="1">Disable this if you just want vanilla behavior to occur when in combat (always removing SNEAK unless you cast a spell with a STEALTH flag)</content>
     <content contentuid="h26f8791b66c04affa315083c5d53cbcf7ab5" version="1">Maximum Base Radius For Randomized Ghost Position On Action</content>
