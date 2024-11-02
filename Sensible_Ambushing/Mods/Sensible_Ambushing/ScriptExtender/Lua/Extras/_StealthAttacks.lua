@@ -24,7 +24,7 @@ local function RollStealthAgainstEnemies(stealthActor)
 	end
 end
 
---- Determine if the spell has the Ally() or not Enemy() TargetConditions, making it non-hostile
+--- Determine if the spell has the `Ally(` or `not Enemy(` TargetConditions, making it non-hostile
 --- Some mods, like https://www.nexusmods.com/baldursgate3/mods/3940, replace these functions with their
 --- own varieties. We can't predict what a mod author is going to do, so we're hoping they at least follow the
 --- not *Enemy( and *Ally( pattern
@@ -50,7 +50,6 @@ end
 EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, _, _)
 	local caster_entity = Ext.Entity.Get(caster)
 	local stealth_tracker = caster_entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker or {}
-	stealth_tracker.SpellCast = spell
 
 	local spellProperties = Ext.Stats.Get(spell).SpellProperties
 	if spellProperties and next(stealth_tracker) then
@@ -66,12 +65,13 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, 
 		end
 	end
 
-	if Osi.HasActiveStatus(caster, "SNEAKING") == 1 then
-		if Osi.SpellHasSpellFlag(spell, "Stealth") == 0 then
-			stealth_tracker.Counter = (stealth_tracker.Counter or 0) + 1
+	if Osi.HasActiveStatus(caster, "SNEAKING") == 1 and Osi.SpellHasSpellFlag(spell, "Stealth") == 0 then
+		stealth_tracker.SpellCast = spell
+		stealth_tracker.Counter = (stealth_tracker.Counter or 0) + 1
 
-			if Osi.IsInCombat(caster) == 0 then
-				Ext.Timer.WaitFor(3000, function()
+		if Osi.IsInCombat(caster) == 0 then
+			if MCM.Get("SA_enable_out_of_combat_action_behavior") then
+				Ext.Timer.WaitFor(Ext.Math.Round(MCM.Get("SA_delay_on_applying_sneak_out_of_combat") * 1000), function()
 					-- cuz caching - https://github.com/Norbyte/bg3se/blob/main/Docs/API.md#caching-behavior
 					if caster_entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker and Osi.IsInCombat(caster) == 0 then
 						Logger:BasicDebug(
@@ -84,11 +84,14 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, 
 					end
 				end)
 			else
-				RollStealthAgainstEnemies(caster)
+				stealth_tracker = nil
 			end
+		else
+			RollStealthAgainstEnemies(caster)
 		end
+
+		caster_entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = stealth_tracker
 	end
-	caster_entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = stealth_tracker
 end)
 
 EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
@@ -112,6 +115,10 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 	end
 end)
 
+local function CalculateGhostPosition(action_counter, current_coord)
+	return (Ext.Math.Random(-10, 10) / action_counter) + current_coord
+end
+
 EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealthActor, enemy, resultType, _, criticality)
 	if eventName == "Sensible_Ambush_Stealth_Action_Check_" .. ModuleUUID then
 		Logger:BasicTrace("Processing Ambush Stealth Action check for %s against %s with result %s and criticality %s",
@@ -121,15 +128,20 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 			criticality)
 
 		local entity = Ext.Entity.Get(stealthActor)
-		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker or {}
+		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
+
+		if not stealth_tracker then
+			Logger:BasicDebug("%s rolled a stealth action check, but didn't have their tracker?", stealthActor)
+			return
+		end
 
 		if resultType == 1 and entity.Stealth then
 			local x, y, z = Osi.GetPosition(stealthActor)
 			local newPosition = { Osi.FindValidPosition(
-				(Ext.Math.Random(-10, 10) / stealth_tracker.Counter) + x,
+				CalculateGhostPosition(stealth_tracker.Counter, x),
 				-- don't wanna change the y axis, too many considerations and it doesn't make much sense anyway
 				y,
-				(Ext.Math.Random(-10, 10) / stealth_tracker.Counter) + z,
+				CalculateGhostPosition(stealth_tracker.Counter, z),
 				3,
 				stealthActor,
 				0
@@ -160,11 +172,13 @@ Ext.Osiris.RegisterListener("StatusRemoved", 4, "after", function(char, status, 
 		local tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
 		if tracker then
 			if Osi.IsInCombat(char) == 0 and IsHostileSpell(tracker.SpellCast) then
-				Logger:BasicTrace(
-					"%s lost sneaking due to %s and still had their tracker, but they're out of combat and cast the hostile spell [%s], so letting CombatStarted handle applying SNEAKING",
-					char,
-					causee,
-					tracker.SpellCast)
+				if MCM.Get("SA_enable_out_of_combat_action_behavior") then
+					Logger:BasicTrace(
+						"%s lost sneaking due to %s and still had their tracker, but they're out of combat and cast the hostile spell [%s], so letting CombatStarted handle applying SNEAKING",
+						char,
+						causee,
+						tracker.SpellCast)
+				end
 			else
 				Logger:BasicTrace("%s lost sneaking due to %s, but still had their tracker and is either in combat or [%s] is a non-hostile spell, so reapplying sneak",
 					char,

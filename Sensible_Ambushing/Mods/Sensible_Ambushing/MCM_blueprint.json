@@ -265,6 +265,66 @@
 			]
 		},
 		{
+			"TabId": "stealh_combat",
+			"TabName": "Stealth Combat",
+			"TabDescription": "Configures behavior around performing actions while that influence Combat sneaking",
+			"Handles": {
+				"NameHandle": "ha18a08d7acde425e91a8d7e53114799c9380",
+				"DescriptionHandle": "hc816a6f7c87543cca37ea05a39272d990ef6"
+			},
+			"Sections": [
+				{
+					"SectionId": "out_of_combat",
+					"SectionName": "Out of Combat",
+					"SectionDescription": "Configures behavior when sneaking and not already in combat",
+					"Handles": {
+						"NameHandle": "h458d46197b0f4343bc3042bc4004f24463f0",
+						"DescriptionHandle": "h17fa06b4c93b4c82a7095f894bb4fd437c35"
+					},
+					"Options": {
+						"IsCollapsible": true
+					},
+					"Settings": [
+						{
+							"Id": "SA_enable_out_of_combat_action_behavior",
+							"Name": "Enable Out Of Combat Behavior",
+							"Description": "Disable this if you just want vanilla behavior to occur when out of combat (always removing SNEAK unless you cast a spell with a STEALTH flag)",
+							"Handles": {
+								"NameHandle": "h3995ece79eff4c58ae694df5f0afca556f26",
+								"DescriptionHandle": "hef5781ca3efb4fa2a98e7d21769ac54721c9"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_delay_on_applying_sneak_out_of_combat",
+							"Name": "How Long To Delay Reapplying Sneak On Hostile Actions (In Seconds)",
+							"Description": "When casting a spell without a specific STEALTH flag, the game engine automatically removes the sneak status - to get around that, this mod automatically reapplys the SNEAKING condition. To ensure combat begins appropriately when casting spells that can affect enemies, this setting delays the reapplication of SNEAK until combat either begins or the specific length of time passes to prevent the attacked character seeking you out in real time. Due to varied spell animation lengths, there is no single 'perfect' number for this.",
+							"Handles": {
+								"NameHandle": "he13c02018d044fea915c6c023708821a7b43",
+								"DescriptionHandle": "h1c9e3fae536448fea9c4d16854bf0ce3079f"
+							},
+							"Type": "drag_float",
+							"Default": 2.0,
+							"Options": {
+								"Max": 5.0,
+								"Min": 0.0
+							},
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_enable_out_of_combat_action_behavior",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
 			"TabId": "extras",
 			"TabName": "Extras",
 			"TabDescription": "Contains extra behavior that complement Ambushing mechanics",
