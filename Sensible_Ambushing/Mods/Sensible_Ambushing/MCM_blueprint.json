@@ -274,6 +274,31 @@
 			},
 			"Sections": [
 				{
+					"SectionId": "shared",
+					"SectionName": "Combat Agnostic",
+					"SectionDescription": "Configs that apply when in and out of combat",
+					"Handles": {
+						"NameHandle": "he85eb656d517493cafd1c02a164fecdf4714",
+						"DescriptionHandle": "he77fb0dde4564ee88bb60b6719fc18b40743"
+					},
+					"Options": {
+						"IsCollapsible": true
+					},
+					"Settings": [
+						{
+							"Id": "SA_stealth_actions_requires_stealth_proficiency",
+							"Name": "Only Characters With Stealth Proficiency Are Eligible",
+							"Description": "If disabled, all characters are eligible to retain their SNEAKING after performing a non-Stealth action, adhering to the rules of this mod",
+							"Handles": {
+								"NameHandle": "hc8e3eba89959438ab4921a9567ab74f0b246",
+								"DescriptionHandle": "h52e128ee02544f528bd280a8d037b6663gfb"
+							},
+							"Type": "checkbox",
+							"Default": true
+						}
+					]
+				},
+				{
 					"SectionId": "out_of_combat",
 					"SectionName": "Out of Combat",
 					"SectionDescription": "Configures behavior when sneaking and not already in combat",

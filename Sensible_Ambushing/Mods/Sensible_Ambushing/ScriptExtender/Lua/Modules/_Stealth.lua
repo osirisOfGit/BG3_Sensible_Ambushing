@@ -79,7 +79,7 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, sneaki
 			criticality)
 
 		if MCM.Get("SA_sneaking_chars_can_trip") and criticality == 2 then -- Critical Fail
-			Logger:BasicDebug("%s critically failed their stealth check!", sneakingChar)
+			Logger:BasicInfo("%s critically failed their stealth check!", sneakingChar)
 
 			Osi.ApplyStatus(sneakingChar, "PRONE", 1)
 
@@ -90,7 +90,7 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, sneaki
 		for char, originalGhost in pairs(stealth_tracker) do
 			if char == sneakingChar then
 				if resultType == 0 then
-					Logger:BasicDebug("%s failed their stealth check, so the enemy knows they're being ambushed", sneakingChar)
+					Logger:BasicInfo("%s failed their stealth check, so the enemy knows they're being ambushed", sneakingChar)
 
 					local ent = Ext.Entity.Get(sneakingChar)
 					ent.Stealth.Position = originalGhost

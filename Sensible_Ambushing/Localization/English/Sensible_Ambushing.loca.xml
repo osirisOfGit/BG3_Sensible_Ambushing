@@ -99,4 +99,8 @@
     <content contentuid="h013d3d684c0c477eac57c7223ed27e50d9d8" version="1">Calculation is (randomized ghost distance with obscurity / (number of consecutive actions while sneaking / this divisor)), ensuring that the enemy is better able to figure out where you are after each action (if the action does not have the STEALTH flag). (number of consecutive actions while sneaking / this divisor) will round up to 1 if less than 1. 
         Generated Ash Surface will display (max radius with obscurity / (2 / this divisor)), emulating 2 consecutive actions.
         Count resets if sneak is removed intentionally or by another mechanic, like using the Hide skill or being seen by an NPC.</content>
+    <content contentuid="hc8e3eba89959438ab4921a9567ab74f0b246" version="1">Only Characters With Stealth Proficiency Are Eligible</content>
+    <content contentuid="h52e128ee02544f528bd280a8d037b6663gfb" version="1">If disabled, all characters are eligible to retain their SNEAKING after performing a non-Stealth action, adhering to the rules of this mod</content>
+    <content contentuid="he85eb656d517493cafd1c02a164fecdf4714" version="1">Combat Agnostic</content>
+    <content contentuid="he77fb0dde4564ee88bb60b6719fc18b40743" version="1">Configs that apply when in and out of combat</content>
 </contentList>
