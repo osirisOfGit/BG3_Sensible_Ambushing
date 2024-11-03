@@ -621,7 +621,7 @@
 						{
 							"Id": "SA_surprise_enabled",
 							"Name": "Enable Sensible Ambush's Conditions For Triggering Surprise",
-							"Description": "Sensible Ambush will trigger Surprise against a group if anything is done to them from stealth - this includes any attack or spell, including those not supported by the game, like grenades (NOTE: This currently only applies when you click directly on an enemy - I haven't figured out zone logic yet). Disable this if you just want vanilla behavior - below options will still apply either way",
+							"Description": "Sensible Ambush will trigger Surprise against a group if anything is done to them from stealth - this includes any attack or spell, including those not supported by the game, like grenades. Disable this if you just want vanilla behavior - below options will still apply either way",
 							"Handles": {
 								"NameHandle": "heb246fdfdf1744a08fa9ce95fba5c09e03e6",
 								"DescriptionHandle": "h8182f9ab420e4348b0b6d96e440df7cb26cd"
