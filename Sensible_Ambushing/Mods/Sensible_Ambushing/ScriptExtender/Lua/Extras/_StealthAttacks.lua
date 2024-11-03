@@ -326,6 +326,7 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 				entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
 				return
 			end
+
 			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker.FailedStealthRoll = true
 			Logger:BasicInfo("%s failed their Stealth Action roll - steering %s towards them", stealthActor, enemy)
 		end
@@ -428,7 +429,7 @@ Ext.ModEvents.BG3MCM["MCM_Setting_Saved"]:Subscribe(function(payload)
 end)
 
 Ext.Osiris.RegisterListener("CombatRoundStarted", 2, "before", function(combatGuid, round)
-	if MCM.Get("SA_enable_in_combat_behavior") and Osi.CombatGetGuidFor(Osi.GetHostCharacter()) == combatGuid then
+	if MCM.Get("SA_enabled") and MCM.Get("SA_enable_in_combat_behavior") and Osi.CombatGetGuidFor(Osi.GetHostCharacter()) == combatGuid then
 		Logger:BasicInfo("\n====================================\nStarting Combat Round %s for Combat %s\n====================================", round, combatGuid)
 	end
 end)

@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [0.5.0]
+
+## Added
+
+- Stealth Action logic - too much functionality to describe here, but TLDR is acting while sneaking no longer automatically removes sneaking, ghost position is randomized during combat, and the attacking char's summon is automatically brought in with them
+
+## Changed
+
+- Only roll stealth checks against enemies that have LOS to you and are capable of spotting sneakers
+- Failing a stealth check initiated by this mod will cause the enemy you failed against to look at you, forcing a hide check if you're within their sight cone
+- Protected common Event functions to catch exceptions and log the errors
+- Enhanced logging
+
+## Fixes
+
+- Corrected description for Surprise in MCM - all actions that trigger combat are now supported
+
 # [0.4.0]
 
 ## Changed
