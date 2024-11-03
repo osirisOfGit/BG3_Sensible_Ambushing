@@ -330,7 +330,7 @@
 								"DescriptionHandle": "h1c9e3fae536448fea9c4d16854bf0ce3079f"
 							},
 							"Type": "slider_float",
-							"Default": 1.5,
+							"Default": 2.0,
 							"Options": {
 								"Max": 5.0,
 								"Min": 0.0

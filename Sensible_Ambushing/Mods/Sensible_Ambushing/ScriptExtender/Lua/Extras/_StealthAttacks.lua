@@ -130,9 +130,9 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 		for _, ambushingCombatMember in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
 			ambushingCombatMember = ambushingCombatMember[1]
 			local entity = Ext.Entity.Get(ambushingCombatMember)
-			local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker or {}
+			local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
 
-			if stealth_tracker.Counter then
+			if stealth_tracker then
 				-- Just in case there's some gap in events and it doesn't get reset
 				stealth_tracker.Counter = 1
 				Logger:BasicDebug("%s acted from stealth and should keep their stealth in combat, so doing that", ambushingCombatMember)
@@ -245,23 +245,20 @@ end
 
 EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealthActor, enemy, resultType, _, criticality)
 	if eventName == "Sensible_Ambush_Stealth_Action_Check_" .. ModuleUUID then
+		local entity = Ext.Entity.Get(stealthActor)
+		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
+
+		if not stealth_tracker then
+			return
+		end
+		
 		Logger:BasicDebug("Processing Ambush Stealth Action check for %s against %s with result %s and criticality %s",
 			stealthActor,
 			enemy,
 			resultType,
 			criticality)
 
-		local entity = Ext.Entity.Get(stealthActor)
-		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
-
-		if not stealth_tracker then
-			Logger:BasicWarning(
-				"%s rolled a stealth action check, but didn't have their tracker? This is a bug - skipping result functionality, please report on Nexus page with your MCM configs and your scenario - https://www.nexusmods.com/baldursgate3/mods/13114?tab=bugs",
-				stealthActor)
-			return
-		end
-
-		if resultType == 1 and entity.Stealth then
+		if resultType == 1 and entity.Stealth and stealth_tracker then
 			if Osi.GetDistanceTo(stealthActor, enemy) <= 9 then
 				Logger:BasicDebug("Steering %s to %s as they're within 9m of each other", enemy, stealthActor)
 				Osi.SteerTo(enemy, stealthActor, 0)
@@ -281,8 +278,9 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 		else
 			Osi.SteerTo(enemy, stealthActor, 0)
 			if criticality == 2 then
-				Logger:BasicInfo("%s critically failed their Stealth Action roll - removing sneak and steering %s towards them", stealthActor, enemy)
+				Logger:BasicInfo("%s critically failed their Stealth Action roll - removing sneak and tracker, and steering %s towards them", stealthActor, enemy)
 				Osi.RemoveStatus(stealthActor, "SNEAKING")
+				entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
 				return
 			end
 			Logger:BasicInfo("%s failed their Stealth Action roll - steering %s towards them", stealthActor, enemy)
