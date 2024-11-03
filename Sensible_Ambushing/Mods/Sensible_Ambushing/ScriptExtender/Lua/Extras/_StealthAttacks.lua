@@ -140,8 +140,46 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 				Osi.ApplyStatus(ambushingCombatMember, "SNEAKING", -1, 0)
 
 				RollStealthAgainstEnemies(ambushingCombatMember)
-
 				entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = stealth_tracker
+
+				local summons = Osi.DB_PlayerSummons:Get(nil)
+				if #summons > 0 then
+					for _, summon in pairs(summons) do
+						summon = summon[1]
+
+						if (Ext.Entity.Get(summon).IsSummon.Summoner.Uuid.EntityUuid == Osi.GetUUID(ambushingCombatMember)) then
+							for _, potentialEnemy in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+								potentialEnemy = potentialEnemy[1]
+								if Osi.IsEnemy(ambushingCombatMember, potentialEnemy) == 1 then
+									if Osi.HasActiveStatus(summon, "SNEAKING") == 1 then
+										Osi.RemoveStatus(summon, "SNEAKING")
+									end
+
+									Osi.EnterCombat(summon, potentialEnemy)
+
+									Osi.ApplyStatus(summon, "SNEAKING", -1)
+
+									Ext.Entity.Get(summon):OnCreateDeferredOnce("Stealth", function(c)
+										-- Need to replace the whole table, not just one index because... memory shenanigans
+										local pos = c.Stealth.Position
+
+										-- y pos - Position has to be out of the sight cones of enemies, so placing it underground works without risking weird extreme math
+										pos[2] = pos[2] * -1
+										c.Stealth.Position = pos
+
+										-- Syncs the server changes to the clients
+										c:Replicate("Stealth")
+
+										Logger:BasicDebug("Added %s's summon, %s, to combat and hid their ghost", ambushingCombatMember, summon)
+									end)
+
+									break
+								end
+							end
+						end
+					end
+				end
+
 				return
 			end
 		end
@@ -251,7 +289,7 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 		if not stealth_tracker then
 			return
 		end
-		
+
 		Logger:BasicDebug("Processing Ambush Stealth Action check for %s against %s with result %s and criticality %s",
 			stealthActor,
 			enemy,
