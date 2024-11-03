@@ -115,6 +115,7 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, 
 				end
 			else
 				if MCM.Get("SA_enable_in_combat_behavior") then
+					stealth_tracker.FailedStealthRoll = false
 					RollStealthAgainstEnemies(caster)
 				else
 					stealth_tracker = nil
@@ -286,7 +287,7 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 		local entity = Ext.Entity.Get(stealthActor)
 		local stealth_tracker = entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker
 
-		if not stealth_tracker then
+		if not stealth_tracker or stealth_tracker.FailedStealthRoll then
 			return
 		end
 
@@ -321,6 +322,7 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 				entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
 				return
 			end
+			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker.FailedStealthRoll = true
 			Logger:BasicInfo("%s failed their Stealth Action roll - steering %s towards them", stealthActor, enemy)
 		end
 	end
