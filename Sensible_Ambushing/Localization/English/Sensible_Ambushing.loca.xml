@@ -51,7 +51,7 @@
     <content contentuid="hef5781ca3efb4fa2a98e7d21769ac54721c9" version="1">Disable this if you just want vanilla behavior to occur when out of combat (always removing SNEAK unless you cast a spell with a STEALTH flag)</content>
     <content contentuid="he13c02018d044fea915c6c023708821a7b43" version="1">How Long To Delay Reapplying Sneak On Hostile Actions (In Seconds)</content>
     <content contentuid="h1c9e3fae536448fea9c4d16854bf0ce3079f" version="1">When casting a spell without a specific STEALTH flag (basically any spell except Minor Illusion or when NOT using Subtle Metamagic), the game engine automatically removes the sneak status - to get around that, this mod automatically reapplys the SNEAKING condition (following Proficiency rules if enabled). 
-        To ensure combat begins appropriately when casting spells that can affect enemies, this setting delays the reapplication of SNEAK until combat either begins or the specific length of time passes to prevent the attacked character seeking you out in real time. Due to varied spell animation lengths, there is no single 'perfect' number for this.
+        To ensure combat begins appropriately when casting spells that can affect enemies, this setting delays the reapplication of SNEAK until combat either begins or the specific length of time passes to prevent the attacked character seeking you out in real time. Due to varied spell animation lengths, projectile travel distance, enemy behavior processing, etc, there is no single 'perfect' number for this.
         If you cast a spell that can't affect enemies (e.g. Bless), SNEAK will be reapplied without a delay.</content>
     
     <content contentuid="hefcef06877c9403b9289e83619c571b2ff9g" version="1">In Combat</content>
