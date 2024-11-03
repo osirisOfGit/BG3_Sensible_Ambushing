@@ -192,28 +192,30 @@ local function ConvertObscurityLevel(char, enemy)
 	local state = string.upper(Osi.GetObscuredState(char))
 
 	-- Blindsight - https://bg3.norbyte.dev/search?q=Blindsight#result-309760ef9587ef0c4edd1125b697524c6b143f96
-	if state == "CLEAR" or Osi.IsTagged(enemy, "a49c94ac-6903-408e-8b05-86371fd865c0") == 1 then
+	if state == "CLEAR" or (enemy and Osi.IsTagged(enemy, "a49c94ac-6903-408e-8b05-86371fd865c0") == 1) then
 		return 0
 	end
 
-	local darkvisionRange = 0
-	for _, boostEntry in pairs(Ext.Entity.Get(enemy).BoostsContainer.Boosts) do
-		if boostEntry.Type == "DarkvisionRangeMin" then
-			for _, boost in pairs(boostEntry.Boosts) do
-				local range = tonumber(boost.DarkvisionRangeMinBoost.Range)
-				darkvisionRange = darkvisionRange < range and range or darkvisionRange
-			end
-			break
-		end
-	end
-
 	local darkVisionSubtractor = 0
-	if darkvisionRange and Osi.GetDistanceTo(char, enemy) <= darkvisionRange then
-		darkVisionSubtractor = 1
-		Logger:BasicTrace("%s has darkvision range of %d and is within range of %s, so reducing obscurity level by one",
-			enemy,
-			darkvisionRange,
-			char)
+	if enemy then
+		local darkvisionRange = 0
+		for _, boostEntry in pairs(Ext.Entity.Get(enemy).BoostsContainer.Boosts) do
+			if boostEntry.Type == "DarkvisionRangeMin" then
+				for _, boost in pairs(boostEntry.Boosts) do
+					local range = tonumber(boost.DarkvisionRangeMinBoost.Range)
+					darkvisionRange = darkvisionRange < range and range or darkvisionRange
+				end
+				break
+			end
+		end
+
+		if darkvisionRange and Osi.GetDistanceTo(char, enemy) <= darkvisionRange then
+			darkVisionSubtractor = 1
+			Logger:BasicTrace("%s has darkvision range of %d and is within range of %s, so reducing obscurity level by one",
+				enemy,
+				darkvisionRange,
+				char)
+		end
 	end
 
 	if state == "LIGHTLYOBSCURED" then
