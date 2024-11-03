@@ -8,7 +8,6 @@ Ext.Vars.RegisterUserVariable("Sensible_Ambushing_Stealth_Proficiency", {
 	Server = true
 })
 
-
 local function RollStealthAgainstEnemies(stealthActor)
 	for _, enemyCombatant in pairs(Osi.DB_Is_InCombat:Get(nil, Osi.CombatGetGuidFor(stealthActor))) do
 		enemyCombatant = enemyCombatant[1]
@@ -29,16 +28,16 @@ local function RollStealthAgainstEnemies(stealthActor)
 	end
 end
 
+local not_enemy_pattern = "not%s+([a-zA-Z_]*Enemy%()"
+local ally_pattern = "([a-zA-Z_]*Ally%()"
 --- Determine if the spell has the `Ally(` or `not Enemy(` TargetConditions, making it non-hostile
 --- Some mods, like https://www.nexusmods.com/baldursgate3/mods/3940, replace these functions with their
 --- own varieties. We can't predict what a mod author is going to do, so we're hoping they at least follow the
 --- not *Enemy( and *Ally( pattern
 local function IsHostileSpell(spell)
 	local str = Ext.Stats.Get(spell).TargetConditions
-	local enemy_pattern = "not%s+([a-zA-Z_]*Enemy%()"
-	local ally_pattern = "([a-zA-Z_]*Ally%()"
 
-	local enemy_match = str:match(enemy_pattern)
+	local enemy_match = str:match(not_enemy_pattern)
 	if enemy_match then
 		return false
 	end
@@ -173,7 +172,8 @@ local function ConvertObscurityLevel(char, enemy)
 		darkVisionSubtractor = 1
 		Logger:BasicTrace("%s has darkvision range of %d and is within range of %s, so reducing obscurity level by one",
 			enemy,
-			darkvisionRange)
+			darkvisionRange,
+			char)
 	end
 
 	if state == "LIGHTLYOBSCURED" then
@@ -191,7 +191,7 @@ local function CalculateRandomGhostPosition(char, enemy, action_counter)
 	-- Don't wanna zero out the obscurity if randomization doesn't move the ghost
 	pos_sign = pos_sign == 0.0 and 1.0 or pos_sign
 
-	local with_obscurity = (ConvertObscurityLevel(char, enemy) * MCM.Get("SA_ghost_radius_obscurity_multiplier")) * Ext.Math.Sign(randomized_pos)
+	local with_obscurity = (ConvertObscurityLevel(char, enemy) * MCM.Get("SA_ghost_radius_obscurity_multiplier")) * pos_sign
 
 	local action_counter_divisor = action_counter / MCM.Get("SA_action_counter_divisor")
 	action_counter_divisor = action_counter_divisor < 1 and 1 or action_counter_divisor
@@ -218,7 +218,7 @@ local function CalculateRandomGhostCoordinates(stealthActor, enemy, stealth_trac
 		-- don't wanna change the y axis, too many considerations and it doesn't make much sense anyway
 		y,
 		CalculateRandomGhostPosition(stealthActor, enemy, stealth_tracker.Counter) + z,
-		3,
+		3 + retries,
 		stealthActor,
 		0
 	) }
@@ -279,13 +279,13 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 			entity.Stealth.Position = newPosition
 			entity:Replicate("Stealth")
 		else
-			Logger:BasicInfo("%s failed their Stealth Action roll - steering %s to them", stealthActor, enemy)
-
-			if criticality == 2 then
-				Osi.RemoveStatus(stealthActor, "SNEAKING")
-			end
-
 			Osi.SteerTo(enemy, stealthActor, 0)
+			if criticality == 2 then
+				Logger:BasicInfo("%s critically failed their Stealth Action roll - removing sneak and steering %s towards them", stealthActor, enemy)
+				Osi.RemoveStatus(stealthActor, "SNEAKING")
+				return
+			end
+			Logger:BasicInfo("%s failed their Stealth Action roll - steering %s towards them", stealthActor, enemy)
 		end
 	end
 end)
@@ -357,6 +357,8 @@ Ext.Osiris.RegisterListener("LeftCombat", 2, "after", function(char, _)
 	if entity and entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker then
 		Logger:BasicTrace("%s left combat and had the stealth action tracker - resetting", char)
 		entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
+		-- There could be temporary buffs/items/statuses that grant proficiency in stealth, so need to recalculate each combat
+		entity.Vars.Sensible_Ambushing_Stealth_Proficiency = nil
 	end
 end)
 
