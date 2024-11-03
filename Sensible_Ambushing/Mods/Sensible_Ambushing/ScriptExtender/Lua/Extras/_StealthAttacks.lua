@@ -63,6 +63,7 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, 
 				if functor.TypeId == "ApplyStatus" and functor.StatusId == "SNEAKING" then
 					Logger:BasicTrace("%s cast %s, which applies sneaking, so removing the stealth tracker", caster, spell)
 					caster_entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
+					caster_entity.Vars.Sensible_Ambushing_Stealth_Proficiency = nil
 					return
 				end
 			end
@@ -88,9 +89,9 @@ EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, spell, _, 
 					end
 				end
 			end
-			caster_entity.Vars.Sensible_Ambushing_Stealth_Proficiency = hasStealthProficiency
 			::exit::
 		end
+		caster_entity.Vars.Sensible_Ambushing_Stealth_Proficiency = hasStealthProficiency
 
 		if hasStealthProficiency then
 			stealth_tracker.SpellCast = spell
@@ -220,6 +221,9 @@ local function ConvertObscurityLevel(char, enemy)
 	elseif state == "HEAVILYOBSCURED" then
 		return 2 - darkVisionSubtractor
 	end
+
+	Logger:BasicWarning("Obscurity state %s isn't supported - this is probably a defect? Let me know on Nexus!", state)
+	return 0
 end
 
 local function CalculateRandomGhostPosition(char, enemy, action_counter)
@@ -335,14 +339,14 @@ Ext.Osiris.RegisterListener("StatusRemoved", 4, "after", function(char, status, 
 		if tracker then
 			if Osi.IsInCombat(char) == 0 and MCM.Get("SA_enable_out_of_combat_action_behavior") then
 				if IsHostileSpell(tracker.SpellCast) then
-					Logger:BasicTrace(
-						"%s lost sneaking due to %s and still had their tracker, but they're out of combat and cast the hostile spell [%s], so letting CombatStarted handle applying SNEAKING",
+					Logger:BasicDebug(
+						"%s lost sneaking due to %s and still had their tracker, but they were out of combat when they cast the hostile spell [%s], so letting CombatStarted handle applying SNEAKING",
 						char,
 						causee,
 						tracker.SpellCast)
 				else
-					Logger:BasicTrace(
-						"%s lost sneaking due to %s and still had their tracker, but they're out of combat and cast the non-hostile spell [%s], so re-applying SNEAKING",
+					Logger:BasicDebug(
+						"%s lost sneaking due to %s and still had their tracker, and they were out of combat when casting the non-hostile spell [%s], so re-applying SNEAKING",
 						char,
 						causee,
 						tracker.SpellCast)
@@ -350,7 +354,7 @@ Ext.Osiris.RegisterListener("StatusRemoved", 4, "after", function(char, status, 
 					Osi.ApplyStatus(char, status, -1, 0)
 				end
 			elseif Osi.IsInCombat(char) == 1 and MCM.Get("SA_enable_in_combat_behavior") then
-				Logger:BasicTrace("%s lost sneaking due to %s, but still had their tracker and is in combat, so reapplying sneak",
+				Logger:BasicDebug("%s lost sneaking due to %s, but still had their tracker and is in combat, so reapplying sneak",
 					char,
 					causee,
 					tracker.SpellCast)

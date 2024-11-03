@@ -37,16 +37,23 @@
     <!-- END SNEAKING MCM -->
 
     <!-- START STEALTH COMBAT MCM -->
+    <content contentuid="he85eb656d517493cafd1c02a164fecdf4714" version="1">Combat Agnostic</content>
+    <content contentuid="he77fb0dde4564ee88bb60b6719fc18b40743" version="1">Configs that apply when in and out of combat</content>
+    <content contentuid="hc8e3eba89959438ab4921a9567ab74f0b246" version="1">Only Characters With Stealth Proficiency Are Eligible</content>
+    <content contentuid="h52e128ee02544f528bd280a8d037b6663gfb" version="1">If disabled, all characters are eligible to retain their SNEAKING after performing a non-Stealth action, adhering to the rules of this mod</content>
+    
     <content contentuid="ha18a08d7acde425e91a8d7e53114799c9380" version="1">Stealth Combat</content>
     <content contentuid="hc816a6f7c87543cca37ea05a39272d990ef6" version="1">Configures behavior around performing actions while that influence Combat sneaking</content>
+    
     <content contentuid="h458d46197b0f4343bc3042bc4004f24463f0" version="1">Out of Combat</content>
     <content contentuid="h17fa06b4c93b4c82a7095f894bb4fd437c35" version="1">Configures behavior when sneaking and not already in combat</content>
-    <content contentuid="he13c02018d044fea915c6c023708821a7b43" version="1">How Long To Delay Reapplying Sneak On Hostile Actions (In Seconds)</content>
-    <content contentuid="h1c9e3fae536448fea9c4d16854bf0ce3079f" version="1">When casting a spell without a specific STEALTH flag (basically any spell except Minor Illusion or when NOT using Subtle Metamagic), the game engine automatically removes the sneak status - to get around that, this mod automatically reapplys the SNEAKING condition. 
-        To ensure combat begins appropriately when casting spells that can affect enemies, this setting delays the reapplication of SNEAK until combat either begins or the specific length of time passes to prevent the attacked character seeking you out in real time. 
-        Due to varied spell animation lengths, there is no single 'perfect' number for this.</content>
     <content contentuid="h3995ece79eff4c58ae694df5f0afca556f26" version="1">Enable Out Of Combat Behavior</content>
     <content contentuid="hef5781ca3efb4fa2a98e7d21769ac54721c9" version="1">Disable this if you just want vanilla behavior to occur when out of combat (always removing SNEAK unless you cast a spell with a STEALTH flag)</content>
+    <content contentuid="he13c02018d044fea915c6c023708821a7b43" version="1">How Long To Delay Reapplying Sneak On Hostile Actions (In Seconds)</content>
+    <content contentuid="h1c9e3fae536448fea9c4d16854bf0ce3079f" version="1">When casting a spell without a specific STEALTH flag (basically any spell except Minor Illusion or when NOT using Subtle Metamagic), the game engine automatically removes the sneak status - to get around that, this mod automatically reapplys the SNEAKING condition. 
+        To ensure combat begins appropriately when casting spells that can affect enemies, this setting delays the reapplication of SNEAK until combat either begins or the specific length of time passes to prevent the attacked character seeking you out in real time. Due to varied spell animation lengths, there is no single 'perfect' number for this.
+        If you cast a spell that can't affect enemies (e.g. Bless), SNEAK will be reapplied without a delay (following Proficiency rules if enabled).</content>
+    
     <content contentuid="hefcef06877c9403b9289e83619c571b2ff9g" version="1">In Combat</content>
     <content contentuid="hf82cd86d337c4256b5fbc9c1c5988dfc57f7" version="1">When performing a non-stealth action while in Combat and Sneaking, you roll a Stealth check against each enemy that can spot you and has Line-Of-Sight. 
         If you pass these checks, your 'ghost' (which represents where enemies think you are) gets randomly placed within a defined horizontal (not vertical) distance of you; if you fail, your ghost stays with you and enemies look directly at your position, forcing you to make a Hide check if you're within sight. Critically failing means your stealth is removed.
@@ -63,10 +70,6 @@
     <content contentuid="h013d3d684c0c477eac57c7223ed27e50d9d8" version="1">Calculation is (randomized ghost distance with obscurity / (number of consecutive actions while sneaking / this divisor)), ensuring that the enemy is better able to figure out where you are after each action (if the action does not have the STEALTH flag). (number of consecutive actions while sneaking / this divisor) will round up to 1 if less than 1. 
         Generated Ash Surface will display (max radius with obscurity / (2 / this divisor)), emulating 2 consecutive actions.
         Count resets if sneak is removed intentionally or by another mechanic, like using the Hide skill or being seen by an NPC.</content>
-    <content contentuid="hc8e3eba89959438ab4921a9567ab74f0b246" version="1">Only Characters With Stealth Proficiency Are Eligible</content>
-    <content contentuid="h52e128ee02544f528bd280a8d037b6663gfb" version="1">If disabled, all characters are eligible to retain their SNEAKING after performing a non-Stealth action, adhering to the rules of this mod</content>
-    <content contentuid="he85eb656d517493cafd1c02a164fecdf4714" version="1">Combat Agnostic</content>
-    <content contentuid="he77fb0dde4564ee88bb60b6719fc18b40743" version="1">Configs that apply when in and out of combat</content>
     <!-- END STEALTH COMBAT MCM -->
 
     <!-- START EXTRAS MCM -->
