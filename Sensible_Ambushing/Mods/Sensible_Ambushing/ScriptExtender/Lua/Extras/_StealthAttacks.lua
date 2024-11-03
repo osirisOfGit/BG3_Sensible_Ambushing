@@ -121,35 +121,71 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 	end
 end)
 
-local function ConvertObscurityLevel(char)
-	local state = Osi.GetObscuredState(char)
-	if state == "LightlyObscured" then
-		return 1
-	elseif state == "HeavilyObscured" then
-		return 2
+local function ConvertObscurityLevel(char, enemy)
+	local state = string.upper(Osi.GetObscuredState(char))
+
+	-- Blindsight - https://bg3.norbyte.dev/search?q=Blindsight#result-309760ef9587ef0c4edd1125b697524c6b143f96
+	if state == "CLEAR" or Osi.IsTagged(enemy, "a49c94ac-6903-408e-8b05-86371fd865c0") == 1 then
+		return 0
 	end
 
-	return 0
+	local darkvisionRange = 0
+	for _, boostEntry in pairs(Ext.Entity.Get(enemy).BoostsContainer.Boosts) do
+		if boostEntry.Type == "DarkvisionRangeMin" then
+			for _, boost in pairs(boostEntry.Boosts) do
+				local range = tonumber(boost.DarkvisionRangeMinBoost.Range)
+				darkvisionRange = darkvisionRange < range and range or darkvisionRange
+			end
+			break
+		end
+	end
+
+	local darkVisionSubtractor = 0
+	if darkvisionRange and Osi.GetDistanceTo(char, enemy) <= darkvisionRange then
+		darkVisionSubtractor = 1
+		Logger:BasicTrace("%s has darkvision range of %d and is within range of %s, so reducing obscurity level by one",
+			enemy,
+			darkvisionRange)
+	end
+
+
+	if state == "LIGHTLYOBSCURED" then
+		return 1 - darkVisionSubtractor
+	elseif state == "HEAVILYOBSCURED" then
+		return 2 - darkVisionSubtractor
+	end
 end
 
-local function CalculateRandomGhostPosition(char, action_counter)
+local function CalculateRandomGhostPosition(char, enemy, action_counter)
 	local max_radius = MCM.Get("SA_max_radius_for_ghost_on_action")
+
 	local randomized_pos = Ext.Math.Random(max_radius * -1, max_radius)
-	local pos_sign = Ext.Math.Sign(randomized_pos)
-	local with_obscurity = (ConvertObscurityLevel(char) * MCM.Get("SA_ghost_radius_obscurity_multiplier")) * pos_sign
+
+	local with_obscurity = (ConvertObscurityLevel(char, enemy) * MCM.Get("SA_ghost_radius_obscurity_multiplier")) * Ext.Math.Sign(randomized_pos)
+
 	local action_counter_divisor = action_counter / MCM.Get("SA_action_counter_divisor")
 	action_counter_divisor = action_counter_divisor < 1 and 1 or action_counter_divisor
+
+	Logger:BasicTrace(
+		"Calculated the following components of the Random Ghost Position algorithm for %s against %s:\n\tmax_radius = %s\n\trandomized_pos = %s\n\twith_obscurity = %s\n\taction_counter_divisor = %s",
+		char,
+		enemy,
+		max_radius,
+		randomized_pos,
+		with_obscurity,
+		action_counter_divisor
+	)
 
 	return ((randomized_pos + with_obscurity) / action_counter_divisor)
 end
 
-local function CalculateRandomGhostCoordinates(stealthActor, stealth_tracker)
+local function CalculateRandomGhostCoordinates(stealthActor, enemy, stealth_tracker)
 	local x, y, z = Osi.GetPosition(stealthActor)
 	local newPosition = { Osi.FindValidPosition(
-		CalculateRandomGhostPosition(stealthActor, stealth_tracker.Counter) + x,
+		CalculateRandomGhostPosition(stealthActor, enemy, stealth_tracker.Counter) + x,
 		-- don't wanna change the y axis, too many considerations and it doesn't make much sense anyway
 		y,
-		CalculateRandomGhostPosition(stealthActor, stealth_tracker.Counter) + z,
+		CalculateRandomGhostPosition(stealthActor, enemy, stealth_tracker.Counter) + z,
 		3,
 		stealthActor,
 		0
@@ -188,22 +224,27 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 		end
 
 		if resultType == 1 and entity.Stealth then
-			local newPosition = CalculateRandomGhostCoordinates(stealthActor, stealth_tracker)
+			if Osi.GetDistanceTo(stealthActor, enemy) <= 9 then
+				Logger:BasicDebug("Steering %s to %s as they're within 9m of each other", enemy, stealthActor)
+				Osi.SteerTo(enemy, stealthActor, 0)
+			end
 
-			if not newPosition then
+			local newPosition = CalculateRandomGhostCoordinates(stealthActor, enemy, stealth_tracker)
+
+			if not next(newPosition) then
 				local retries = 0
 				while retries <= 3 do
-					if not newPosition then
+					if not next(newPosition) then
 						retries = retries + 1
 						Logger:BasicDebug("Failed to find a valid random ghost coordinate - retry attempt %s", retries)
-						newPosition = CalculateRandomGhostCoordinates(stealthActor, stealth_tracker)
+						newPosition = CalculateRandomGhostCoordinates(stealthActor, enemy, stealth_tracker)
 					else
 						break
 					end
 				end
 			end
 
-			if not newPosition then
+			if not next(newPosition) then
 				Logger:BasicDebug("Couldn't find a valid random ghost coordinate for %s - leaving it alone", stealthActor)
 				return
 			end
@@ -212,15 +253,13 @@ EventCoordinator:RegisterEventProcessor("RollResult", function(eventName, stealt
 
 			entity.Stealth.Position = newPosition
 			entity:Replicate("Stealth")
-
-			if Osi.GetDistanceTo(stealthActor, enemy) <= 9 then
-				Logger:BasicDebug("Steering %s to %s as they're within 9m of each other", enemy, stealthActor)
-				Osi.SteerTo(enemy, stealthActor, 0)
-			end
 		else
-			Logger:BasicDebug("%s failed their Stealth Action roll - removing SNEAKING")
-			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
-			Osi.RemoveStatus(stealthActor, "SNEAKING")
+			Logger:BasicDebug("%s failed their Stealth Action roll - steering %s to them", stealthActor, enemy)
+			
+			if criticality == 2 then
+				Osi.RemoveStatus(stealthActor, "SNEAKING")
+			end
+
 			Osi.SteerTo(enemy, stealthActor, 0)
 		end
 	end
@@ -238,8 +277,16 @@ Ext.Osiris.RegisterListener("StatusRemoved", 4, "after", function(char, status, 
 						char,
 						causee,
 						tracker.SpellCast)
+				else
+					Logger:BasicTrace(
+						"%s lost sneaking due to %s and still had their tracker, but they're out of combat and cast the non-hostile spell [%s], so re-applying SNEAKING",
+						char,
+						causee,
+						tracker.SpellCast)
+
+					Osi.ApplyStatus(char, status, -1, 0)
 				end
-			elseif MCM.Get("SA_enable_in_combat_behavior") then
+			elseif Osi.IsInCombat(char) == 1 and MCM.Get("SA_enable_in_combat_behavior") then
 				Logger:BasicTrace("%s lost sneaking due to %s, but still had their tracker and is in combat, so reapplying sneak",
 					char,
 					causee,
@@ -268,7 +315,7 @@ EventCoordinator:RegisterEventProcessor("StatusApplied", function(char, status, 
 end)
 
 Ext.Osiris.RegisterListener("Saw", 3, "after", function(character, targetCharacter, targetWasSneaking)
-	if targetWasSneaking == 1 and Osi.IsPartyMember(character, 1) == 0 then
+	if targetWasSneaking == 1 and Osi.HasActiveStatus(character, "SNEAKING") == 0 then
 		local entity = Ext.Entity.Get(targetCharacter)
 		if entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker then
 			Logger:BasicTrace("%s lost sneaking due to %s seeing them, so clearing their tracker", targetCharacter, character)
