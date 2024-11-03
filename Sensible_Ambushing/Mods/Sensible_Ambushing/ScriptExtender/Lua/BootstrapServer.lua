@@ -8,5 +8,6 @@ Ext.Require("_EventCoordinator.lua")
 
 Ext.Require("Extras/_MetalProne.lua")
 Ext.Require("Extras/_Surprise.lua")
+Ext.Require("Extras/_StealthAttacks.lua")
 
 Ext.Require("_AmbushDirector.lua")

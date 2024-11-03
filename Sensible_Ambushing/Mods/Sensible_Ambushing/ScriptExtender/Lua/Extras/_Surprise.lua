@@ -1,5 +1,6 @@
 -- Maps to Sensible_Ambushing\Public\Sensible_Ambushing\DifficultyClasses\DifficultyClasses.lsx
 Extra_Surprise = {}
+
 Extra_Surprise.difficultyClassUUIDs = {
 	[1] = "a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6",
 	[2] = "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e",
@@ -42,32 +43,25 @@ if the game has decided the group should be Surprised, so the theory behind this
 4. If false, then we clear the tracker - we also clear it if they do any other action before the tracker expires
 ]]
 
--- Applied to characters that are adversly affected by a sneaking character
-Ext.Vars.RegisterUserVariable("Sensible_Ambushing_Acted_From_Stealth", {
+Ext.Vars.RegisterUserVariable("Sensible_Ambushing_Acted_From_Stealth_Should_Surprise", {
 	Server = true
 })
 
 -- Weapon attacks are spells too - i.e. https://bg3.norbyte.dev/search?q=type%3Aspell+Ranged+%26+Attack#result-eda1854279be71702cf949e192e8b08a2839b809
 -- AttackedBy event triggers after Sneaking is removed, so we can't use that
-Ext.Osiris.RegisterListener("CastSpell", 5, "after", function(caster, spell, spellType, _, storyActionID)
-	if MCM.Get("SA_enabled") and MCM.Get("SA_surprise_enabled")
-	then
-		Logger:BasicTrace("Processing CastSpell event: \n\t|caster| = %s\n\t|spell| = %s\n\t|spellType| = %s\n\t|storyActionID| = %s",
-			caster,
-			spell,
-			spellType,
-			storyActionID)
+EventCoordinator:RegisterEventProcessor("CastSpell", function(caster, _, _, _, _)
+	if MCM.Get("SA_surprise_enabled") then
 		local attacker_entity = Ext.Entity.Get(caster)
 		-- Blanket reset in case they're somehow chaining actions
-		attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
+		attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise = nil
 
-		if Osi.HasActiveStatus(caster, "SNEAKING") == 1 then
-			attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = true
+		if Osi.HasActiveStatus(caster, "SNEAKING") == 1 and Osi.IsInCombat(caster) == 0 then
+			attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise = true
 
 			Ext.Timer.WaitFor(3000, function()
-				if attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth then
-					Logger:BasicDebug("%s acted from stealth, but the tracker wasn't processed, so removing tracker", caster)
-					attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
+				if attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise then
+					Logger:BasicDebug("%s acted from stealth and was eligible to surprise their enemies, but the tracker wasn't processed, so removing tracker", caster)
+					attacker_entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise = nil
 				end
 			end)
 		end
@@ -80,8 +74,8 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 			ambushingCombatMember = ambushingCombatMember[1]
 			local entity = Ext.Entity.Get(ambushingCombatMember)
 
-			if entity.Vars.Sensible_Ambushing_Acted_From_Stealth then
-				entity.Vars.Sensible_Ambushing_Acted_From_Stealth = nil
+			if entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise then
+				entity.Vars.Sensible_Ambushing_Acted_From_Stealth_Should_Surprise = nil
 				Logger:BasicDebug("%s acted from stealth and should surprise their enemies, so doing that", ambushingCombatMember)
 
 				for _, potentialEnemy in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
@@ -94,7 +88,7 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 							potentialEnemy,
 							ambushingCombatMember)
 
-						Osi.ApplyStatus(potentialEnemy, "SURPRISED", 1)
+						Osi.ApplyStatus(potentialEnemy, "SURPRISED", 1, 0)
 					end
 				end
 				return
@@ -104,9 +98,7 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 end)
 
 EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedCharacter, status, causee, _)
-	if status == "SURPRISED"
-		and MCM.Get("SA_surprise_enabled")
-	then
+	if status == "SURPRISED" then
 		local applies_to = MCM.Get("SA_surprise_applies_to_condition")
 		-- Nobody
 		if applies_to == Ext.Loca.GetTranslatedString("h7eb270a054fe440080ce8a1f664135da3ade")
@@ -119,8 +111,9 @@ EventCoordinator:RegisterEventProcessor("StatusApplied", function(surprisedChara
 		then
 			Logger:BasicDebug("Character %s did not meet selected MCM criteria %s, so removing the Surprise status", surprisedCharacter, applies_to)
 			Osi.RemoveStatus(surprisedCharacter, "SURPRISED")
-		elseif MCM.Get("SA_resist_surprise_ability") ~= Ext.Loca.GetTranslatedString("h4a5bd083bf284046bbf40c1c0a4844878c79") -- None
-		then
+
+			-- None
+		elseif MCM.Get("SA_resist_surprise_ability") ~= Ext.Loca.GetTranslatedString("h4a5bd083bf284046bbf40c1c0a4844878c79") then
 			local ability_skill = MCM.Get("SA_resist_surprise_ability")
 			local dc = MCM.Get("SA_resist_surprise_dc")
 

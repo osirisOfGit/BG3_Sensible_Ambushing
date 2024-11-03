@@ -43,7 +43,7 @@ EventCoordinator:RegisterEventProcessor("StatusApplied", function(character, sta
 				local metalEquipmentCount = calculateNumberOfMetalEquipment(character)
 
 				if metalEquipmentCount > 1 then
-					Logger:BasicDebug("%s has %d metal pieces equipped and passes the MCM checks - attracting %s", character, metalEquipmentCount, who_this_applies_to)
+					Logger:BasicDebug("%s has %d metal pieces equipped and passes the MCM checks - attracting %s", character, metalEquipmentCount, MCM.Get("SA_metal_chars_attract_type_condition"))
 					-- other candidates
 					-- Osi.PlayEffect("S_Player_Gale_ad9af97d-75da-406a-ae13-7071c563f604", "VFX_Spells_Cast_Damage_Thunder_TargetAoE_Impact_PostFX_Textkey_02_b52ab2d3-b887-459f-d375-6059b7fadbc0", "", 1)
 					-- Osi.PlayEffect("S_Player_Gale_ad9af97d-75da-406a-ae13-7071c563f604", "VFX_Spells_Cast_Damage_Thunder_TargetAoE_Impact_Textkey_02_8805c3ee-2b46-1450-d053-fb612089da7d", "", 15)

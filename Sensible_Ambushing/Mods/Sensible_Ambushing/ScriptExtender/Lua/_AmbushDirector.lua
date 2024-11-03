@@ -63,6 +63,7 @@ local function AreSummonsEligibleToJoinAmbush(combatGuid, character, char_pre_am
 			summon = summon[1]
 
 			if (Ext.Entity.Get(summon).IsSummon.Summoner.Uuid.EntityUuid == Osi.GetUUID(character)) then
+				Logger:BasicTrace("Summon %s was found to belong to %s - processing rules", summon, character)
 				summon_pre_ambush_functions[summon] = {}
 				summon_post_ambush_functions[summon] = {}
 
