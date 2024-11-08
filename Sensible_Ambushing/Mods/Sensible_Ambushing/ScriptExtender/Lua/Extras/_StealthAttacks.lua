@@ -393,6 +393,8 @@ Ext.Osiris.RegisterListener("Saw", 3, "after", function(character, targetCharact
 		if entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker then
 			Logger:BasicTrace("%s lost sneaking due to %s seeing them, so clearing their tracker", targetCharacter, character)
 			entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
+			-- Rules could change between stealths
+			entity.Vars.Sensible_Ambushing_Stealth_Proficiency = nil
 		end
 	end
 end)
@@ -402,7 +404,7 @@ Ext.Osiris.RegisterListener("LeftCombat", 2, "after", function(char, _)
 	if entity and entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker then
 		Logger:BasicTrace("%s left combat and had the stealth action tracker - resetting", char)
 		entity.Vars.Sensible_Ambushing_Stealth_Action_Tracker = nil
-		-- There could be temporary buffs/items/statuses that grant proficiency in stealth, so need to recalculate each combat
+		-- Evaluation could change between combats
 		entity.Vars.Sensible_Ambushing_Stealth_Proficiency = nil
 	end
 end)
