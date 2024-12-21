@@ -25,14 +25,3 @@ Ext.Events.SessionLoaded:Subscribe(function()
 	stealth.StatusPropertyFlags = flags
 	stealth:Sync()
 end)
-
-Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(level, _)
-	if level == "SYS_CC_I" then return end
-
-	for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
-		player_char = player_char[1]
-		if Osi.HasPassive(player_char, "Sensible_Ambushing_Eligible_Passive") == 0 then
-			Osi.AddPassive(player_char, "Sensible_Ambushing_Eligible_Passive")
-		end
-	end
-end)

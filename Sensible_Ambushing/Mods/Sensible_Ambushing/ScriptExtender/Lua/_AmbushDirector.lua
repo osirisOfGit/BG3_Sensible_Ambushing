@@ -29,7 +29,7 @@ local function IsCharacterEligibleToJoinAmbush(combatGuid, character)
 	elseif Osi.CanJoinCombat(character) ~= 1 then
 		Logger:BasicWarning("%s can't join combat?", character)
 		return
-	elseif Osi.HasActiveStatus(character, "Sensible_Ambushing_Eligible_Status") == 0 and Osi.IsSummon(character) == 0 then
+	elseif Osi.HasActiveStatus(character, "SENSIBLE_AMBUSHING_ELIGIBLE_STATUS") == 0 and Osi.IsSummon(character) == 0 then
 		Logger:BasicInfo("%s has disabled the Sensible Ambushing passive, so excluding from ambush", character)
 		return
 	elseif MCM.Get("SA_distance_enable") then
@@ -187,5 +187,33 @@ Ext.ModEvents.BG3MCM["MCM_Setting_Saved"]:Subscribe(function(payload)
 	if payload.settingId == "SA_distance_from_combat_member" then
 		-- https://bg3.norbyte.dev/search?q=Surface#result-bbcd130617bfa4089f42431fb3373dca79334542
 		Osi.CreateSurface(Osi.GetHostCharacter(), "SurfaceAsh", payload.value, 1)
+	end
+end)
+
+Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(level, _)
+	if level == "SYS_CC_I" then return end
+
+	for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
+		local character = player_char[1]
+		if Osi.HasPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE") == 0 then
+			Osi.AddPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE")
+		end
+	end
+end)
+
+---@param character CHARACTER
+Ext.Osiris.RegisterListener("CharacterJoinedParty", 1, "after", function(character)
+	if Osi.IsSummon(character) == 1 or Osi.IsPartyFollower(character) == 1 then return end
+
+	if Osi.HasPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE") == 0 then
+		Osi.AddPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE")
+	end
+end)
+
+---@param character CHARACTER
+Ext.Osiris.RegisterListener("CharacterLeftParty", 1, "after", function(character)
+	if Osi.HasPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE") == 1 then
+		Osi.RemovePassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE")
+		Osi.RemoveStatus(character, "SENSIBLE_AMBUSHING_ELIGIBLE_STATUS")
 	end
 end)
