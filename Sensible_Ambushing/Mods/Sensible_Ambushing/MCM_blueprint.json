@@ -501,6 +501,39 @@
 			},
 			"Sections": [
 				{
+					"SectionId": "misc",
+					"SectionName": "Miscellaneous",
+					"SectionDescription": "Miscellaneous features that don't require their own sections",
+					"Handles": {
+						"NameHandle": "h40573ea983314ccdbb1daaa75ae37a2d4f37",
+						"DescriptionHandle": "h2b59572ca37642dc9888a0d46f3e57ecg7fg"
+					},
+					"Settings": [
+						{
+							"Id": "SA_obscurity_icons",
+							"Name": "Enable Overhead Obscurity Icons",
+							"Description": "Allows obscurity icons to show while sneaking, giving a more obvious indicator of each character's obscurity level",
+							"Handles": {
+								"NameHandle": "h619c1b1cbf0048b9a17ccc569479e42d23d5",
+								"DescriptionHandle": "hf49908e1c91e48c0ab9545095f486fe7egg1"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_disable_sneak_combat_log",
+							"Name": "Disable Combat Log For Sneaking",
+							"Description": "Reduces the spam that comes from this mod removing and reapplying Sneak status constantly",
+							"Handles": {
+								"NameHandle": "h2bc09cdeaaff4b0dbb4db8d77f245977aa0a",
+								"DescriptionHandle": "h753a29f72e9442f3a85e6d8380ffa71d08de"
+							},
+							"Type": "checkbox",
+							"Default": true
+						}
+					]
+				},
+				{
 					"SectionId": "prone",
 					"SectionName": "When Characters With Metal Equipment Are Knocked Prone",
 					"SectionDescription": "Optional features to trigger when a character wearing metal equipment (weapon, shield, armor) is knocked prone (e.g. when tripping during an ambush, or slipping on ice)",

@@ -124,4 +124,10 @@
     <content contentuid="h4a5bd083bf284046bbf40c1c0a4844878c79" version="1">None</content>
     <!-- END SURPRISE MCM -->
     <!-- END EXTRAS MCM -->
+    <content contentuid="h40573ea983314ccdbb1daaa75ae37a2d4f37" version="1">Miscellaneous</content>
+    <content contentuid="h2b59572ca37642dc9888a0d46f3e57ecg7fg" version="1">Miscellaneous features that don't require their own sections</content>
+    <content contentuid="h619c1b1cbf0048b9a17ccc569479e42d23d5" version="1">Enable Overhead Obscurity Icons</content>
+    <content contentuid="hf49908e1c91e48c0ab9545095f486fe7egg1" version="1">Allows obscurity icons to show while sneaking, giving a more obvious indicator of each character's obscurity level</content>
+    <content contentuid="h2bc09cdeaaff4b0dbb4db8d77f245977aa0a" version="1">Disable Combat Log For Sneaking</content>
+    <content contentuid="h753a29f72e9442f3a85e6d8380ffa71d08de" version="1">Reduces the spam that comes from this mod removing and reapplying Sneak status constantly</content>
 </contentList>
