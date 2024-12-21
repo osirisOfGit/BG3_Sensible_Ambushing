@@ -24,11 +24,31 @@ local function IsCharacterEligibleToJoinAmbush(combatGuid, character)
 	local post_ambush_functions = {}
 
 	if Osi.IsInCombat(character) == 1 then
-		Logger:BasicTrace("Character %s is already in combat", character)
+		Logger:BasicTrace("%s is already in combat", character)
 		return
 	elseif Osi.CanJoinCombat(character) ~= 1 then
-		Logger:BasicWarning("Character %s can't join combat?", character)
+		Logger:BasicWarning("%s can't join combat?", character)
 		return
+	elseif Osi.HasActiveStatus(character, "SENSIBLE_AMBUSHING_ELIGIBLE_STATUS") == 0 and Osi.IsSummon(character) == 0 then
+		Logger:BasicInfo("%s has disabled the Sensible Ambushing passive, so excluding from ambush", character)
+		return
+	elseif MCM.Get("SA_distance_enable") then
+		local isWithinDistance = false
+		for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
+			combatParticipant = combatParticipant[1]
+
+			if combatParticipant ~= character then
+				if Osi.GetDistanceTo(character, combatParticipant) <= MCM.Get("SA_distance_from_combat_member") then
+					isWithinDistance = true
+					break
+				end
+			end
+		end
+		if not isWithinDistance then
+			Logger:BasicDebug("%s is not within %d meters of any combat member, so excluding them from ambush", character, MCM.Get("SA_distance_from_combat_member"))
+			return
+		end
+		table.insert(post_ambush_functions, function() Logger:BasicDebug("%s joining combat due to being within distance!", character) end)
 	end
 
 	for module, moduleFunc in pairs(modules) do
@@ -159,65 +179,41 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 	Logger:BasicTrace("Finished processing in %dms", Ext.Utils.MonotonicTime() - startTime)
 end)
 
+Ext.ModEvents.BG3MCM["MCM_Setting_Saved"]:Subscribe(function(payload)
+	if not payload or payload.modUUID ~= ModuleUUID or not payload.settingId or not MCM.Get("SA_show_surface_for_radius_settings") then
+		return
+	end
 
---[[
-local function OnCombatStarted(combatGUID)
-    local combatParticipants = Osi["DB_Is_InCombat"]:Get(nil, nil)
-
-    for _, row in pairs(combatParticipants) do
-        local initiativeOrder = math.random(1, 4)
-        local participantTpl = row[1]
-        local participantGUID = string.sub(participantTpl, -36)
-        local participantEntity = Ext.Entity.Get(participantGUID)
-
-        if (participantEntity) then
-            participantEntity.CombatParticipant.InitiativeRoll = initiativeOrder
-
-			-- CombatHandle is an entity and you cannot access its properties directly like this
-            -- This part seems to work as is, but if you want to change this part too then you need
-            -- to call Ext.Entity.Get on participantEntity.CombatParticipant.CombatHandle first, then
-            -- adjust the properties on that.
-            --participantEntity.CombatParticipant.CombatHandle.CombatState.Initiatives[participantTpl] = initiativeOrder
-
-            _P("Character: " .. participantTpl)
-            _P("Initiative: " .. initiativeOrder .. "\n")
-
-            participantEntity:Replicate("CombatParticipant")
-
-            _P('Updated initiative of ' .. participantTpl)
-        else
-            _P(participantTpl .. ' has no entity??')
-        end
-    end
-end
-
-
--- https://discord.com/channels/98922182746329088/771869529528991744/1269036327165231134
-Ext.RegisterConsoleCommand("ROL", function(_, osiFunction)
-    if Osi[osiFunction] then
-        Ext.Osiris.RegisterListener(osiFunction, Osi[osiFunction].Arities[1], "before", function(...)
-            FCDebug(osiFunction..": %s", Ext.DumpExport({...}))
-        end)
-    end
+	if payload.settingId == "SA_distance_from_combat_member" then
+		-- https://bg3.norbyte.dev/search?q=Surface#result-bbcd130617bfa4089f42431fb3373dca79334542
+		Osi.CreateSurface(Osi.GetHostCharacter(), "SurfaceAsh", payload.value, 1)
+	end
 end)
 
-Ext.RegisterConsoleCommand("REL", function(_, extenderEvent)
-    Ext.Events[extenderEvent]:Subscribe(function(e)
-        FCDump({extenderEvent, {e}})
-    end)
+Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(level, _)
+	if level == "SYS_CC_I" then return end
+
+	for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
+		local character = player_char[1]
+		if Osi.HasPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE") == 0 then
+			Osi.AddPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE")
+		end
+	end
 end)
 
+---@param character CHARACTER
+Ext.Osiris.RegisterListener("CharacterJoinedParty", 1, "after", function(character)
+	if Osi.IsSummon(character) == 1 or Osi.IsPartyFollower(character) == 1 then return end
 
--- https://discord.com/channels/98922182746329088/771869529528991744/1260072668070412430
-local function OnLevelGameplayStarted(levelName, isEditorMode)
-    _P('Level gameplay started')
+	if Osi.HasPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE") == 0 then
+		Osi.AddPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE")
+	end
+end)
 
-    local hostEntity = Ext.Entity.Get(Osi.GetHostCharacter())
-    Ext.Entity.Subscribe("Health", function(c)
-        _P("HP changed!")
-        _D(c.Health)
-    end, hostEntity)
-end
-Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", OnLevelGameplayStarted)
-
-]]
+---@param character CHARACTER
+Ext.Osiris.RegisterListener("CharacterLeftParty", 1, "after", function(character)
+	if Osi.HasPassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE") == 1 then
+		Osi.RemovePassive(character, "SENSIBLE_AMBUSHING_ELIGIBLE_PASSIVE")
+		Osi.RemoveStatus(character, "SENSIBLE_AMBUSHING_ELIGIBLE_STATUS")
+	end
+end)
