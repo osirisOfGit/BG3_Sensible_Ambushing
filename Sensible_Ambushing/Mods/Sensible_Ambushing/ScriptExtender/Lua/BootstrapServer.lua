@@ -36,12 +36,3 @@ Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(level, 
 		end
 	end
 end)
-
--- Ext.Events.Shutdown:Subscribe(function ()
--- 	for _, player_char in pairs(Osi.DB_Players:Get(nil)) do
--- 		player_char = player_char[1]
--- 		if Osi.HasPassive(player_char, "Sensible_Ambushing_Eligible_Passive") == 1 then
--- 			Osi.RemovePassive(player_char, "Sensible_Ambushing_Eligible_Passive")
--- 		end
--- 	end
--- end)
