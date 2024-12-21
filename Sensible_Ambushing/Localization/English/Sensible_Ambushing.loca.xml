@@ -2,6 +2,8 @@
 <contentList>
     <content contentuid="h5da6af2254f94a45ac836d6905f1c8d19c98" version="1">Rules</content>
     <content contentuid="h353a00fdee594cae942e2bb1a1fa4cceff05" version="1">Tweak the rules</content>
+    <content contentuid="h24d9694e09364d3d998f094e3d7d31d57b1a" version="1">Can Join Ambushes</content>
+    <content contentuid="hbc0b5deb3ff34291a2c4ecb0bf9fd25b0858" version="1">Character can join ambushes (Sensible Ambushing mod), according to the configured rules (check MCM)</content>
     <!-- START GENERAL MCM -->
     <content contentuid="hc18d4c4b444649f2a4599b69f0ad518a90g4" version="1">General</content>
     <content contentuid="h0a2f540d60324c1ea424e17880655b1c7e19" version="1">General settings</content>
@@ -114,4 +116,10 @@
     <content contentuid="h4a5bd083bf284046bbf40c1c0a4844878c79" version="1">None</content>
     <!-- END SURPRISE MCM -->
     <!-- END EXTRAS MCM -->
+    <content contentuid="h86528066dac8445aaadb50a26a2ca585dg19" version="1">Distance</content>
+    <content contentuid="h670896a77c47493cb702c108c30bdef2b476" version="1">Rules regarding bringing members into combat based on their distance from a combat member</content>
+    <content contentuid="hf980322eaaf74d5c9e15152a85e83c925dg7" version="1">Allow Characters Outside The Combat Zone to Join Combat</content>
+    <content contentuid="h31fb6106a7da41aeb114dc418a2fffe043f4" version="1">By default, characters that are outside the combat zone will not join combat until they're inside of it - disabling this will preserve that functionality unless the character is otherwise eligible to join the ambush (e.g. if they're sneaking, they'll join no matter the distance). Use the toggleable passive to selectively exclude party members while keeping this option enabled.</content>
+    <content contentuid="ha1261b3234cd4c35a34c7dd74e2be86a8c0g" version="1">How Far From A Combat Member Must The Party Member Be?</content>
+    <content contentuid="h4b65f4c57cd24b3891a98f658e3044c6da3a" version="1">This includes enemies, allies, and party members (including summons)</content>
 </contentList>

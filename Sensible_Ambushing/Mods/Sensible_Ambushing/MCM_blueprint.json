@@ -93,6 +93,55 @@
 					]
 				},
 				{
+					"SectionId": "distance",
+					"SectionName": "Distance",
+					"SectionDescription": "Rules regarding bringing party members into combat based on their distance from a combat member",
+					"Handles": {
+						"NameHandle": "h86528066dac8445aaadb50a26a2ca585dg19",
+						"DescriptionHandle": "h670896a77c47493cb702c108c30bdef2b476"
+					},
+					"Options": {
+						"IsCollapsible": true
+					},
+					"Settings": [
+						{
+							"Id": "SA_distance_enable",
+							"Name": "Allow Characters Outside The Combat Zone to Join Combat",
+							"Description": "By default, characters that are outside the combat zone will not join combat until they're inside of it - disabling this will preserve that functionality unless the character is otherwise eligible to join the ambush (e.g. if they're sneaking, they'll join no matter the distance). Use the toggleable passive to selectively exclude party members while keeping this option enabled.",
+							"Handles": {
+								"NameHandle": "hf980322eaaf74d5c9e15152a85e83c925dg7",
+								"DescriptionHandle": "h31fb6106a7da41aeb114dc418a2fffe043f4"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_distance_from_combat_member",
+							"Name": "How Far From A Combat Member Must The Party Member Be?",
+							"Description": "This includes enemies, allies, and party members (including summons)",
+							"Handles": {
+								"NameHandle": "ha1261b3234cd4c35a34c7dd74e2be86a8c0g",
+								"DescriptionHandle": "h4b65f4c57cd24b3891a98f658e3044c6da3a"
+							},
+							"Type": "slider_int",
+							"Default": 20,
+							"Options": {
+								"Max": 100,
+								"Min": 0
+							},
+							"VisibleIf": {
+								"Conditions": [
+									{
+										"SettingId": "SA_distance_enable",
+										"ExpectedValue": true,
+										"Operator": "=="
+									}
+								]
+							}
+						}
+					]
+				},
+				{
 					"SectionId": "sneaking",
 					"SectionName": "Sneaking",
 					"SectionDescription": "Controls configurations around Stealth",
