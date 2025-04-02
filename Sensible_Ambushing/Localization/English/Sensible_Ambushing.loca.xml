@@ -34,6 +34,8 @@
     <content contentuid="h9a13c55410c0458aa57d56e85163dceadbc7" version="1">Controls configurations around Stealth</content>
     <content contentuid="h06c3c574e4904a82a9945e1c73af93ee7d4e" version="1">Sneaking Characters Can Join Ambush</content>
     <content contentuid="h3cf3d320177447e79d68a6c8ac8f819e0f92" version="1">BG3 prevents characters that are sneaking from entering combat - as a workaround, we bring eligible characters out of sneaking, have them enter combat, then have them hide again. Disable this if you don't want sneaking characters to be eligible</content>
+    <content contentuid="h5034970f7d014b779cc83e4bf3f0aee50250" version="1">Invisible Characters Can Join Ambush</content>
+    <content contentuid="h6786aec6c5754ada8214cb9c85795a0473bc" version="1">Invisible characters follow the same vanilla rules as sneaking ones - enabling this option causes invisible characters to follow the same enabled rules as sneaking ones&lt;br&gt;This introduces a minor exploit with concentration invisibility spells, where concentration will be removed from the caster but the status will be reapplied on the target (with the remaining rounds)</content>
     <content contentuid="h1f5c4ef82f62479b9a1420dfbc14f24egf44" version="1">Sneaking Characters Retain Stealth During Ambush</content>
     <content contentuid="h36b2821b51b64b10b4dfab50f8a57d1353f6" version="1">Gives characters that were sneaking before combat started their 'Sneak' back when entering the ambush</content>
     <content contentuid="h87a05633f1fd4977af72671725d932774242" version="1">Enemies Don't Know Where To Look For Ambushing Characters</content>

@@ -155,11 +155,22 @@
 					"Settings": [
 						{
 							"Id": "SA_sneaking_chars_are_eligible",
-							"Name": "Sneaking Characters Can Join ambush",
+							"Name": "Sneaking Characters Can Join Ambush",
 							"Description": "BG3 prevents characters that are sneaking from entering combat - as a workaround, we bring eligible characters out of sneaking, have them enter combat, then have them hide again. Disable this if you don't want sneaking characters to be eligible",
 							"Handles": {
 								"NameHandle": "h06c3c574e4904a82a9945e1c73af93ee7d4e",
 								"DescriptionHandle": "h3cf3d320177447e79d68a6c8ac8f819e0f92"
+							},
+							"Type": "checkbox",
+							"Default": true
+						},
+						{
+							"Id": "SA_invisible_chars_are_eligible",
+							"Name": "Invisible Characters Can Join Ambush",
+							"Description": "Invisible characters follow the same vanilla rules as sneaking ones - enabling this option causes invisible characters to follow the same enabled rules as sneaking ones.\nThis introduces a minor exploit with concentration invisibility spells, where concentration will be removed from the caster but the status will be reapplied on the target (with the remaining rounds)",
+							"Handles": {
+								"NameHandle": "h5034970f7d014b779cc83e4bf3f0aee50250",
+								"DescriptionHandle": "h6786aec6c5754ada8214cb9c85795a0473bc"
 							},
 							"Type": "checkbox",
 							"Default": true

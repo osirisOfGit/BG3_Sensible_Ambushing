@@ -1,14 +1,36 @@
 local stealth_tracker = {}
+local status_tracker = {}
 
 AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, character)
 	local pre_ambush_functions = {}
 	local post_ambush_functions = {}
 
-	if Osi.HasActiveStatus(character, "SNEAKING") == 1 and MCM.Get("SA_sneaking_chars_are_eligible") then
+	if Osi.HasActiveStatus(character, "SNEAKING") == 1 and MCM.Get("SA_sneaking_chars_are_eligible")
+		or Osi.HasActiveStatusWithGroup(character, "SG_Invisible") == 1 and MCM.Get("SA_invisible_chars_are_eligible")
+	then
 		table.insert(pre_ambush_functions, function(character_to_apply)
+			if Osi.HasActiveStatusWithGroup(character_to_apply, "SG_Invisible") == 1 then
+				--- @type EntityHandle
+				local charEntity = Ext.Entity.Get(character_to_apply) 
+				for _, status in pairs(charEntity.StatusContainer.Statuses) do
+					--- @type StatusData
+					local statusData = Ext.Stats.Get(status)
+
+					if statusData and statusData.StatusType == "INVISIBLE" then
+						status_tracker[character_to_apply] = {
+							statusName = status,
+							roundsLeft = Osi.GetStatusCurrentLifetime( , status)
+						}
+						Logger:BasicDebug("%s has status %s left for %s rounds - removing so they can join combat", character_to_apply, status,
+							status_tracker[character_to_apply].roundsLeft)
+						Osi.RemoveStatusesWithType(character_to_apply, "INVISIBLE", character_to_apply)
+						break
+					end
+				end
+			end
 			-- Duplicating check to avoid any kind of weirdness with summons if they're copying their summoner
 			if Osi.HasActiveStatus(character_to_apply, "SNEAKING") == 1 then
-				Logger:BasicDebug("Character %s is currently sneaking - removing so they can join combat", character_to_apply)
+				Logger:BasicDebug("%s is currently sneaking - removing so they can join combat", character_to_apply)
 				Osi.RemoveStatus(character_to_apply, "SNEAKING")
 			end
 		end)
@@ -17,7 +39,16 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 			table.insert(post_ambush_functions, function(character_to_apply)
 				Logger:BasicDebug("Having %s sneak per da rules", character_to_apply)
 
-				Osi.ApplyStatus(character_to_apply, "SNEAKING", -1)
+				if status_tracker[character_to_apply] then
+					Ext.Timer.WaitFor(500, function()
+						local statusInfo = status_tracker[character_to_apply]
+						Osi.ApplyStatus(character_to_apply, statusInfo.statusName, statusInfo.roundsLeft or -1, 1)
+						Logger:BasicDebug("Reapplied %s on %s for %s rounds", statusInfo.statusName, character_to_apply, statusInfo.roundsLeft)
+						status_tracker[character_to_apply] = nil
+					end)
+				else
+					Osi.ApplyStatus(character_to_apply, "SNEAKING", -1)
+				end
 
 				if MCM.Get("SA_hide_sneaking_char_ghost") then
 					--[[

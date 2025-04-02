@@ -43,7 +43,7 @@ local function IsHostileSpell(spell)
 	end
 
 	local ally_match = str:match(ally_pattern)
-	if ally_match and not str:match("not%s+" .. ally_match) then
+	if ally_match and not str:match("not%s+" .. ally_match) then 
 		return false
 	end
 

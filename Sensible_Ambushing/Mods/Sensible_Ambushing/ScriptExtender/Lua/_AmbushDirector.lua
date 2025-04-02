@@ -76,6 +76,7 @@ end
 local function AreSummonsEligibleToJoinAmbush(combatGuid, character, char_pre_ambush_funcs, char_post_ambush_funcs)
 	local summon_pre_ambush_functions = {}
 	local summon_post_ambush_functions = {}
+	local summonsList = {}
 
 	local summons = Osi.DB_PlayerSummons:Get(nil)
 	if #summons > 0 then
@@ -83,11 +84,13 @@ local function AreSummonsEligibleToJoinAmbush(combatGuid, character, char_pre_am
 			summon = summon[1]
 
 			if (Ext.Entity.Get(summon).IsSummon.Summoner.Uuid.EntityUuid == Osi.GetUUID(character)) then
+				table.insert(summonsList, summon)
+
 				Logger:BasicTrace("Summon %s was found to belong to %s - processing rules", summon, character)
 				summon_pre_ambush_functions[summon] = {}
 				summon_post_ambush_functions[summon] = {}
 
-				if MCM.Get("SA_summons_copy_summoner") then
+				if MCM.Get("SA_summons_copy_summoner") and Osi.IsInCombat(character) == 0 then
 					if char_pre_ambush_funcs then
 						for _, pre_ambush_func in pairs(char_pre_ambush_funcs) do
 							table.insert(summon_pre_ambush_functions[summon], pre_ambush_func)
@@ -112,7 +115,7 @@ local function AreSummonsEligibleToJoinAmbush(combatGuid, character, char_pre_am
 
 	-- Returning nil if we're empty makes later checks simpler and more consistent, as long as we know about it (don't do this if you're building an API)
 	-- Since we're using the summon as the index for the table, we can't check the size since lua just iterates the numeric index to get the count
-	return next(summon_pre_ambush_functions) and summon_pre_ambush_functions or nil, next(summon_post_ambush_functions) and summon_post_ambush_functions or nil
+	return next(summon_pre_ambush_functions) and summon_pre_ambush_functions or nil, next(summon_post_ambush_functions) and summon_post_ambush_functions or nil, summonsList
 end
 
 local function executeCharacterAndSummonFuncs(player_char, char_funcs, summon_funcs)
@@ -152,7 +155,7 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 		player_char = player_char[1]
 
 		local char_pre_ambush_functions, char_post_ambush_functions = IsCharacterEligibleToJoinAmbush(combatGuid, player_char)
-		local summons_and_pre_ambush_functions, summons_and_post_ambush_functions = AreSummonsEligibleToJoinAmbush(combatGuid, player_char, char_pre_ambush_functions,
+		local summons_and_pre_ambush_functions, summons_and_post_ambush_functions, sumnmons = AreSummonsEligibleToJoinAmbush(combatGuid, player_char, char_pre_ambush_functions,
 			char_post_ambush_functions)
 
 		if (char_pre_ambush_functions or char_post_ambush_functions) or (summons_and_pre_ambush_functions or summons_and_post_ambush_functions) then
@@ -171,6 +174,11 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 			executeCharacterAndSummonFuncs(player_char, char_pre_ambush_functions, summons_and_pre_ambush_functions)
 
 			Osi.EnterCombat(player_char, targetEnemy)
+			if (summons_and_pre_ambush_functions or summons_and_post_ambush_functions) then
+				for _, summon in ipairs(sumnmons) do
+					Osi.EnterCombat(summon, targetEnemy)
+				end
+			end
 
 			executeCharacterAndSummonFuncs(player_char, char_post_ambush_functions, summons_and_post_ambush_functions)
 		end
