@@ -5,8 +5,8 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 	local pre_ambush_functions = {}
 	local post_ambush_functions = {}
 
-	if Osi.HasActiveStatus(character, "SNEAKING") == 1 and MCM.Get("SA_sneaking_chars_are_eligible")
-		or Osi.HasActiveStatusWithGroup(character, "SG_Invisible") == 1 and MCM.Get("SA_invisible_chars_are_eligible")
+	if (Osi.HasActiveStatus(character, "SNEAKING") == 1 and MCM.Get("SA_sneaking_chars_are_eligible"))
+		or (Osi.HasActiveStatusWithGroup(character, "SG_Invisible") == 1 and MCM.Get("SA_invisible_chars_are_eligible"))
 	then
 		table.insert(pre_ambush_functions, function(character_to_apply)
 			if Osi.HasActiveStatusWithGroup(character_to_apply, "SG_Invisible") == 1 then
@@ -19,7 +19,7 @@ AmbushDirector:RegisterModule(ModuleUUID, "Stealth", function(combatGuid, charac
 					if statusData and statusData.StatusType == "INVISIBLE" then
 						status_tracker[character_to_apply] = {
 							statusName = status,
-							roundsLeft = Osi.GetStatusCurrentLifetime( , status)
+							roundsLeft = Osi.GetStatusCurrentLifetime(character_to_apply, status)
 						}
 						Logger:BasicDebug("%s has status %s left for %s rounds - removing so they can join combat", character_to_apply, status,
 							status_tracker[character_to_apply].roundsLeft)
