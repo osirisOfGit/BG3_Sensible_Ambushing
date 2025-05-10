@@ -162,12 +162,8 @@ EventCoordinator:RegisterEventProcessor("CombatStarted", function(combatGuid)
 			-- Need to find an enemy character to use in Osi.EnterCombat
 			if not targetEnemy then
 				for _, combatParticipant in pairs(Osi.DB_Is_InCombat:Get(nil, combatGuid)) do
-					combatParticipant = combatParticipant[1]
-
-					if Osi.IsEnemy(player_char, combatParticipant) == 1 then
-						targetEnemy = combatParticipant
-						break
-					end
+					targetEnemy = combatParticipant[1]
+					break
 				end
 			end
 
